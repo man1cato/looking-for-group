@@ -4,7 +4,6 @@ import AreaList from './AreaList';
 
 const DashboardPage = () => (
     <div>
-        <h2>Areas</h2>
         <AreaList />
     </div>
 );

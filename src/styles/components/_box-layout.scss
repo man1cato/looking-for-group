@@ -1,22 +1,43 @@
 .box-layout {
-    background: url('/images/bg.jpg');
+    background: linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url('/images/bg-1.jpg');
     background-size: cover;
     display: flex;
     justify-content: center;
-    align-items: center;
+    // align-items: center;
     height: 100vh;       //viewport height
     width: 100vw;        //viewport height
 }
 
 .box-layout__box {
-    background: fade-out(white, .15);
+    background: none;
     border-radius: 3px;
+    // display: flex;
     text-align: center;
-    width: 25rem;
+    // max-width: 60rem;
     padding: $l-size $m-size;
+    margin: 10rem $l-size 0  $l-size;
 }
 
 .box-layout__title {
+    font-size: 5.3rem;
+    font-weight: 700;
+    color: white;
     margin: 0 0 $m-size 0;
-    line-height: 1;
+    line-height: 1.2;
+    
+    @media(min-width: $desktop-breakpoint) {
+        font-size: 10rem;
+    }
+}
+
+.box-layout__subtitle {
+    font-size: $font-size-large;
+    font-weight: 500;
+    color: white;
+    margin: 0 0 $m-size 0;
+    padding: $s-size 0;
+    
+    @media(min-width: $desktop-breakpoint) {
+        font-size: 2.5rem;
+    }
 }
