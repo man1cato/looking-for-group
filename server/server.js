@@ -6,7 +6,7 @@ const port = process.env.PORT || 8080;
 
 app.use(express.static(publicPath));
 
-app.get('*', (req, res) => {
+app.get('*', (req, res) => {                                //MATCH ALL UNMATCHED ROUTES
     res.sendFile(path.join(publicPath, 'index.html'));
 });
 
