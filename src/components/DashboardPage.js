@@ -1,11 +1,13 @@
 import React from 'react';
-import {AreaPage} from './AreaPage';
+import {Link} from 'react-router-dom';
+import AreaList from './AreaList';
 
 const DashboardPage = () => (
     <div>
-        Dashboard page
-        <AreaPage />
+        <h2>Areas</h2>
+        <AreaList />
     </div>
 );
+
 
 export default DashboardPage;

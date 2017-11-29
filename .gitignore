@@ -2,3 +2,6 @@ yarn-error.log
 public/dist/
 .env.test
 .env.development
+promise-test.js
+react-lfg.js
+package-lock.json

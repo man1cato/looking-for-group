@@ -4,6 +4,8 @@ import createHistory from 'history/createBrowserHistory';
 
 import LoginPage from '../components/LoginPage';
 import DashboardPage from '../components/DashboardPage';
+import AreaList from '../components/AreaList';
+import AreaPage from '../components/AreaPage';
 import NotFoundPage from '../components/NotFoundPage';
 import PrivateRoute from './PrivateRoute';
 import PublicRoute from './PublicRoute';
@@ -14,8 +16,9 @@ const AppRouter = () => (
       <Router history={history}>
         <div>
             <Switch>
-                <PublicRoute path="/" component={LoginPage} exact={true}/>
+                <PublicRoute path="/" component={LoginPage} exact={true} />
                 <PrivateRoute path="/dashboard" component={DashboardPage} />
+                <PrivateRoute path="/areas/:id" component={AreaPage} />
                 <Route component={NotFoundPage} />
             </Switch>
         </div>

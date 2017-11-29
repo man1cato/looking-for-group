@@ -1,21 +1,22 @@
 import React from 'react';
 import {connect} from 'react-redux';
-import getAreas from '../selectors/areas';
 
 export const AreaPage = (props) => (
-    <div>
-        <h1>Areas</h1>
+    <div>                            
         <div>
-            Put areas here
+            <h2>{props.area.name}</h2>
+        </div>
+        <div>
+            Airtable list goes here
+            
         </div>
     </div>
 );
 
-// const mapStateToProps = (state) => {
-//     const view = 'Alpha Test List';
-//     return {
-//         areas: getAreas(view)
-//     };
-// };
 
-// export default connect(mapStateToProps)(AreaPage);
+const mapStateToProps = (state, props) => ({
+    area: state.areas.areas.find((area) => area.id === props.match.params.id)     
+});
+
+export default connect(mapStateToProps)(AreaPage);
+
