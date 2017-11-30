@@ -4,6 +4,7 @@ import {Provider} from 'react-redux';
 import AppRouter, {history} from './routers/AppRouter';
 import configureStore from './store/configureStore';
 import {login, logout} from './actions/auth';
+import {startSetUser} from './actions/user';
 import {startSetAreas} from './actions/areas';
 import 'normalize.css/normalize.css';
 import './styles/styles.scss';
@@ -39,6 +40,8 @@ firebase.auth().onAuthStateChanged((user) => {
         console.log('logged in');
         store.dispatch(login(user.uid));
         store.dispatch(startSetAreas('Alpha Test List')).then(() => {
+            return store.dispatch(startSetUser(user.uid));
+        }).then(() => {
             renderApp();
             if (history.location.pathname === '/') {
                 history.push('/dashboard');
