@@ -28,6 +28,6 @@ export const AreaList = (props) => (
 
 // const mapStateToProps = (state) =>  state.areas;
 
-const mapStateToProps = (state) => ({ areas: state.areas.areas });
+const mapStateToProps = (state) => ({ areas: state.areas });
 
 export default connect(mapStateToProps)(AreaList);

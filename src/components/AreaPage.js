@@ -24,7 +24,7 @@ export const AreaPage = (props) => {
 
 
 const mapStateToProps = (state, props) => ({
-    area: state.areas.areas.find((area) => area.id === props.match.params.id)     
+    area: state.areas.find((area) => area.id === props.match.params.id)     
 });
 
 export default connect(mapStateToProps)(AreaPage);

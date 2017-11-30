@@ -2,9 +2,7 @@
 const areasReducer = (state = [], action) => {
     switch (action.type) {
         case 'SET_AREAS':
-            return {
-                areas: action.areas
-            };
+            return action.areas;
         default: 
             return state;
     }

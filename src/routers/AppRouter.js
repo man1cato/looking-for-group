@@ -4,7 +4,6 @@ import createHistory from 'history/createBrowserHistory';
 
 import LoginPage from '../components/LoginPage';
 import DashboardPage from '../components/DashboardPage';
-import AreaList from '../components/AreaList';
 import AreaPage from '../components/AreaPage';
 import NotFoundPage from '../components/NotFoundPage';
 import PrivateRoute from './PrivateRoute';
