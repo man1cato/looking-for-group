@@ -40,7 +40,7 @@ firebase.auth().onAuthStateChanged((user) => {
         console.log('logged in');
         store.dispatch(login(user.uid));
         store.dispatch(startSetAreas('Alpha Test List')).then(() => {
-            return store.dispatch(startSetUser(user.uid));
+            return store.dispatch(startSetUser(user));
         }).then(() => {
             renderApp();
             if (history.location.pathname === '/') {
