@@ -1,5 +1,6 @@
 import axios from 'axios';
 
+const baseUrl = 'https://api.airtable.com/v0/appOY7Pr6zpzhQs6l';
 const apiKey= 'keyzG8AODPdzdkhjG';
 
 
@@ -14,32 +15,56 @@ export const startSetUser = ({uid, email}) => {
     return async (dispatch) => {
         try {
             //SEARCH AIRTABLE FOR USER'S EMAIL
-            const response = await axios.get(`https://api.airtable.com/v0/appOY7Pr6zpzhQs6l/Users?filterByFormula=${filterFormula}&api_key=${apiKey}`);
+            const response = await axios.get(`${baseUrl}/Users?filterByFormula=${filterFormula}&api_key=${apiKey}`);
             //IF EMAIL FOUND, GATHER PROFILE INFO
             if (response.data.records.length > 0) {
+                const userRecord = response.data.records[0];
                 const user = {
-                    recordId: response.data.records[0].id,
-                    firstName: response.data.records[0].fields['First Name'],
-                    lastName: response.data.records[0].fields['Last Name'],
-                    email: response.data.records[0].fields.Email,
-                    interest1: response.data.records[0].fields['#1 Interest'][0],
-                    interest2: response.data.records[0].fields['#2 Interest'][0],
-                    interest3: response.data.records[0].fields['#3 Interest'][0]
+                    recordId: userRecord.id,
+                    firstName: userRecord.fields['First Name'],
+                    lastName: userRecord.fields['Last Name'],
+                    email,
+                    postalCode: userRecord.fields['Postal Code'],
+                    birthYear: userRecord.fields['Birth Year'],
+                    interest1: userRecord.fields['#1 Interest'][0],
+                    interest2: userRecord.fields['#2 Interest'][0],
+                    interest3: userRecord.fields['#3 Interest'][0]
                 };
                 //IF FIREBASE ID NOT PRESENT IN RECORD, ADD TO RECORD
                 if(!response.data.records[0].fields['Firebase ID']) {
-                    axios.patch(`https://api.airtable.com/v0/appOY7Pr6zpzhQs6l/Users/${user.recordId}?api_key=${apiKey}`, 
-                        {"fields": {
-                            "Firebase ID": uid
-                        }}
-                    );
+                    axios.patch(`${baseUrl}/Users/${user.recordId}?api_key=${apiKey}`, {"fields": {"Firebase ID": uid} } );
                 }
                 dispatch(setUser(user));
             } else {
-                dispatch(setUser());
+                const user = { email };
+                dispatch(setUser(user));
             }
         } catch (e) {
             throw new Error('Call to Airtable Users table failed');
         }
+    };
+};
+
+//UPDATE_USER
+export const updateUser = (user) => ({
+    type: 'UPDATE_USER',
+    user
+});
+
+export const startUpdateUser = (user) => {
+    return (dispatch) => {
+        axios.patch(
+            `${baseUrl}/Users/${user.recordId}?api_key=${apiKey}`,
+            {"fields": {
+                "First Name": user.firstName,
+                "Last Name": user.lastName,
+                "Postal Code": user.postalCode,
+                "Birth Year": Number(user.birthYear),
+                "#1 Interest": [user.interest1],
+                "#2 Interest": [user.interest2],
+                "#3 Interest": [user.interest3]
+            }}
+        );
+        dispatch(updateUser(user));
     };
 };

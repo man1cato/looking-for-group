@@ -1,50 +1,126 @@
 import React from 'react';
 import {connect} from 'react-redux';
-import ProfileForm from './ProfileForm';
-
+import {startUpdateUser} from '../actions/user';
+import InterestSelector from './InterestSelector';
 
 export class ProfilePage extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {      //default state
+            recordId: props.user.recordId,
+            firstName: props.user.firstName ? props.user.firstName : '',
+            lastName: props.user.lastName ? props.user.lastName : '',
+            postalCode: props.user.postalCode ? props.user.postalCode: '',
+            birthYear: props.user.birthYear ? props.user.birthYear: 1990,
+            interest1: props.user.interest1 ? props.user.interest1: '',
+            interest2: props.user.interest2 ? props.user.interest2: '',
+            interest3: props.user.interest3 ? props.user.interest3: ''
+        };
+    }
+    onNameChange = (e) => {
+        const name = e.target.name;
+        const value = e.target.value;
+        this.setState(() => ({ [name]: value }));
+    };
+    onBirthYearChange = (e) => {
+        const birthYear = e.target.value;
+        this.setState(() => ({ birthYear }));
+    }
+    onInterestChange = (e) => {
+        const name = e.target.name;
+        const value = e.target.value;
+        this.setState(() => ({[name]: value}));
+    }
+    onSubmit = (e) => {
+        e.preventDefault();
+        this.props.startUpdateUser(this.state);
+        this.props.history.push('/');
+    };
     render() {
         return (
             <div className="content-container">
                 <div>
-                    <h2>Profile</h2>
+                    <h2>User Profile</h2>
                 </div>
-                {
-                    this.props.user.email ? (
+                <div>
+                    <form className="form" onSubmit={this.onSubmit}>
                         <div>
-                            <p>Name: {this.props.user.firstName} {this.props.user.lastName}</p>
-                            <p>Email: {this.props.user.email}</p>
-                            <form>
-                                <div>
-                                    #1 Interest: <select name="interest1" defaultValue={this.props.user.interest1 ? this.props.user.interest1 : ""}>
-                                        {this.props.interests.map((interest) => (<option key={interest.id} value={interest.id}>{interest.name}</option>) )}
-                                    </select>
-                                </div>
-                                <div>
-                                    #2 Interest: <select name="interest2" defaultValue={this.props.user.interest2 ? this.props.user.interest2 : ""}>
-                                        {this.props.interests.map((interest) => (<option key={interest.id} value={interest.id}>{interest.name}</option>) )}
-                                    </select>
-                                </div>
-                                <div>
-                                    #3 Interest: <select name="interest3" defaultValue={this.props.user.interest3 ? this.props.user.interest3 : ""}>
-                                        {this.props.interests.map((interest) => (<option key={interest.id} value={interest.id}>{interest.name}</option>) )}
-                                    </select>
-                                </div>
-                            </form>
+                            Name: <input
+                                className="text-input"
+                                type="text"
+                                name="firstName"
+                                value={this.state.firstName}
+                                onChange={this.onNameChange}
+                            />
+                            <input 
+                                className="text-input"
+                                type="text"
+                                name="lastName"
+                                value={this.state.lastName}
+                                onChange={this.onNameChange}
+                            />
                         </div>
-                    ) : (
-                        <ProfileForm />
-                    )
-                }
+                        <div>
+                            Birth Year: <input 
+                                className="text-input"
+                                type="number" 
+                                name="birthYear" 
+                                min="1900" 
+                                max="2020"
+                                value={this.state.birthYear}
+                                onChange={this.onBirthYearChange}
+                            />
+                        </div>
+                        <div>
+                            #1 Interest: <select 
+                                className="select" 
+                                name="interest1" 
+                                defaultValue={this.state.interest1}
+                                onChange={this.onInterestChange}
+                            >
+                                <option key="0" value=""></option>          //blank option
+                                {this.props.interests.map((interest) => (<option key={interest.id} value={interest.id}>{interest.name}</option>) )}
+                            </select>
+                        </div>
+                        <div>
+                            #2 Interest: <select 
+                                className="select" 
+                                name="interest2" 
+                                defaultValue={this.state.interest2}
+                                onChange={this.onInterestChange}
+                            >
+                                <option key="0" value=""></option>          //blank option
+                                {this.props.interests.map((interest) => (<option key={interest.id} value={interest.id}>{interest.name}</option>) )}
+                            </select>
+                        </div>
+                        <div>
+                            #3 Interest: <select 
+                                className="select" 
+                                name="interest3" 
+                                defaultValue={this.state.interest3}
+                                onChange={this.onInterestChange}
+                            >
+                                <option key="0" value=""></option>          //blank option
+                                {this.props.interests.map((interest) => (<option key={interest.id} value={interest.id}>{interest.name}</option>) )}
+                            </select>
+                        </div>
+                        <div>
+                            <button className="button">Save Profile</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         );
     }
 }
 
-const mapStateToProps = (state, props) => ({
+const mapStateToProps = (state) => ({
     user: state.user,
     interests: state.interests
 });
 
-export default connect(mapStateToProps)(ProfilePage);
+const mapDispatchToProps = (dispatch) => ({
+    startUpdateUser: (user) => dispatch(startUpdateUser(user))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(ProfilePage);

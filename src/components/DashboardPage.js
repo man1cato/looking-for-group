@@ -6,7 +6,7 @@ import AreaList from './AreaList';
 const DashboardPage = () => (
     <div>
         <div>
-            First time here? Make sure to set up your <Link to="/profile">Profile</Link>
+            First time here? Make sure to set up your <Link to="/profile">profile</Link>
         </div>
         <AreaList />
     </div>

@@ -1,5 +1,6 @@
 import axios from 'axios';
 
+const baseUrl = 'https://api.airtable.com/v0/appOY7Pr6zpzhQs6l';
 const apiKey= 'keyzG8AODPdzdkhjG';
 
 
@@ -12,7 +13,7 @@ export const getInterests = (interests) => ({
 export const startGetInterests = () => {
     return async (dispatch) => {
         try {
-            const response = await axios.get(`https://api.airtable.com/v0/appOY7Pr6zpzhQs6l/Interests?api_key=${apiKey}`);
+            const response = await axios.get(`${baseUrl}/Interests?sort[0][field]=Interest&sort[0][direction]=asc&api_key=${apiKey}`);
             const interests = response.data.records.map((record) => ({
                 id: record.id,
                 name: record.fields.Interest
