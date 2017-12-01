@@ -1,17 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Provider} from 'react-redux';               
+import {Provider} from 'react-redux';              
+
 import AppRouter, {history} from './routers/AppRouter';
 import configureStore from './store/configureStore';
+import {firebase} from './firebase/firebase';
 import {login, logout} from './actions/auth';
 import {startSetUser} from './actions/user';
 import {startSetAreas} from './actions/areas';
+import {startGetInterests} from './actions/interests';
+import LoadingPage from './components/LoadingPage';
+
 import 'normalize.css/normalize.css';
 import './styles/styles.scss';
 import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
-import {firebase} from './firebase/firebase';
-import LoadingPage from './components/LoadingPage';
 
 
 const store = configureStore();
@@ -40,6 +43,7 @@ firebase.auth().onAuthStateChanged((user) => {
         console.log('logged in');
         store.dispatch(login(user.uid));
         store.dispatch(startSetAreas('Alpha Test List')).then(() => {
+            store.dispatch(startGetInterests());
             return store.dispatch(startSetUser(user));
         }).then(() => {
             renderApp();

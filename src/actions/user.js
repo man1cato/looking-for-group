@@ -2,6 +2,7 @@ import axios from 'axios';
 
 const apiKey= 'keyzG8AODPdzdkhjG';
 
+
 //SET_USER
 export const setUser = (user = {}) => ({
     type: 'SET_USER',
@@ -20,7 +21,10 @@ export const startSetUser = ({uid, email}) => {
                     recordId: response.data.records[0].id,
                     firstName: response.data.records[0].fields['First Name'],
                     lastName: response.data.records[0].fields['Last Name'],
-                    email: response.data.records[0].fields.Email
+                    email: response.data.records[0].fields.Email,
+                    interest1: response.data.records[0].fields['#1 Interest'][0],
+                    interest2: response.data.records[0].fields['#2 Interest'][0],
+                    interest3: response.data.records[0].fields['#3 Interest'][0]
                 };
                 //IF FIREBASE ID NOT PRESENT IN RECORD, ADD TO RECORD
                 if(!response.data.records[0].fields['Firebase ID']) {
@@ -35,7 +39,7 @@ export const startSetUser = ({uid, email}) => {
                 dispatch(setUser());
             }
         } catch (e) {
-            throw new Error('Call to airtable Users table failed');
+            throw new Error('Call to Airtable Users table failed');
         }
     };
 };
