@@ -28,7 +28,10 @@ export const startSetUser = ({uid, email}) => {
                     birthYear: userRecord.fields['Birth Year'],
                     interest1: userRecord.fields['#1 Interest'][0],
                     interest2: userRecord.fields['#2 Interest'][0],
-                    interest3: userRecord.fields['#3 Interest'][0]
+                    interest3: userRecord.fields['#3 Interest'][0],
+                    availability: userRecord.fields.Availability,
+                    area: userRecord.fields.Area,
+                    groups: userRecord.fields.Groups
                 };
                 //IF FIREBASE ID NOT PRESENT IN RECORD, ADD TO RECORD
                 if(!response.data.records[0].fields['Firebase ID']) {
@@ -62,7 +65,8 @@ export const startUpdateUser = (user) => {
                 "Birth Year": Number(user.birthYear),
                 "#1 Interest": [user.interest1],
                 "#2 Interest": [user.interest2],
-                "#3 Interest": [user.interest3]
+                "#3 Interest": [user.interest3],
+                "Availability": user.availability
             }}
         );
         dispatch(updateUser(user));

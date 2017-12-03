@@ -9,6 +9,7 @@ import {login, logout} from './actions/auth';
 import {startSetUser} from './actions/user';
 import {startGetAreas} from './actions/areas';
 import {startGetInterests} from './actions/interests';
+import {startGetAvailabilities} from './actions/availabilities';
 import LoadingPage from './components/LoadingPage';
 
 import 'normalize.css/normalize.css';
@@ -45,6 +46,8 @@ firebase.auth().onAuthStateChanged((user) => {
         store.dispatch(startGetAreas('Alpha Test List')).then(() => {
             store.dispatch(startGetInterests());
             return store.dispatch(startSetUser(user));
+        }).then(() => {
+            return store.dispatch(startGetAvailabilities());
         }).then(() => {
             renderApp();
             if (history.location.pathname === '/') {

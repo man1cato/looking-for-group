@@ -5,7 +5,7 @@ import AreaList from './AreaList';
 
 const DashboardPage = () => (
     <div>
-        <div>
+        <div className="content-container">
             First time here? Make sure to set up your <Link to="/profile">profile</Link>
         </div>
         <AreaList />
