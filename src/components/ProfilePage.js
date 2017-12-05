@@ -1,6 +1,6 @@
 import React from 'react';
 import {connect} from 'react-redux';
-import {startUpdateUser} from '../actions/user';
+import {startUpdateUser, startUpdateUserLocation} from '../actions/user';
 // import InterestSelector from './InterestSelector';
 import filterAvailabilities from '../utils/filterAvailabilities';
 
@@ -9,6 +9,8 @@ export class ProfilePage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {      //default state
+            uid: props.user.uid,
+            email: props.user.email,
             recordId: props.user.recordId,
             firstName: props.user.firstName ? props.user.firstName : '',
             lastName: props.user.lastName ? props.user.lastName : '',
@@ -17,10 +19,11 @@ export class ProfilePage extends React.Component {
             interest1: props.user.interest1 ? props.user.interest1 : '',
             interest2: props.user.interest2 ? props.user.interest2 : '',
             interest3: props.user.interest3 ? props.user.interest3 : '',
-            availability: props.user.availability ? props.user.availability : ''
+            availability: props.user.availability ? props.user.availability : '',
+            area: props.user.area
         };
     }
-    onNameChange = (e) => {
+    onTextChange = (e) => {
         const name = e.target.name;
         const value = e.target.value;
         this.setState(() => ({ [name]: value }));
@@ -32,24 +35,28 @@ export class ProfilePage extends React.Component {
     onInterestChange = (e) => {
         const name = e.target.name;
         const value = e.target.value;
-        this.setState(() => ({[name]: value}));
+        this.setState(() => ({ [name]: value }));
     }
     onAvailabilityChange = (e) => {
         const checked = e.target.checked;
         const changedAvailability = e.target.name;
         console.log('changedAvailability:',changedAvailability);
         if (checked) {
-            this.setState(() => ({availability: [changedAvailability, ...this.state.availability]}) );
+            this.setState(() => ({ availability: [changedAvailability, ...this.state.availability] }));
             console.log('checked after:',this.state.availability);
         } else {
-            this.setState(() => ({availability: this.state.availability.filter((availability) => availability !== changedAvailability) } ));
+            this.setState(() => ({ availability: this.state.availability.filter((availability) => availability !== changedAvailability) }));
             console.log('unchecked after:',this.state.availability);
         }
     }
     onSubmit = (e) => {
         e.preventDefault();
+        // if (this.state.user.postalCode !== this.props.postalCode) {             //IF POSTAL CODE CHANGES, TRIGGER LOCATION DATA UPDATES
+        //     this.props.startUpdateUserLocation(this.state);
+        // }
         this.props.startUpdateUser(this.state);
         this.props.history.push('/');
+        console.log(this.state);
     };
     render() {
         return (
@@ -65,14 +72,14 @@ export class ProfilePage extends React.Component {
                                 type="text"
                                 name="firstName"
                                 value={this.state.firstName}
-                                onChange={this.onNameChange}
+                                onChange={this.onTextChange}
                             />
                             <input 
                                 className="text-input"
                                 type="text"
                                 name="lastName"
                                 value={this.state.lastName}
-                                onChange={this.onNameChange}
+                                onChange={this.onTextChange}
                             />
                         </div>
                         <div>
@@ -84,6 +91,15 @@ export class ProfilePage extends React.Component {
                                 max="2020"
                                 value={this.state.birthYear}
                                 onChange={this.onBirthYearChange}
+                            />
+                        </div>
+                        <div>
+                            Postal Code: <input 
+                                className="text-input"
+                                type="text" 
+                                name="postalCode"
+                                value={this.state.postalCode}
+                                onChange={this.onTextChange}
                             />
                         </div>
                         <div>
@@ -120,23 +136,22 @@ export class ProfilePage extends React.Component {
                             </select>
                         </div>
                         <div>
-                            Availability: 
-                            <table>
+                            <table className="table">
                                 <thead>
                                     <tr>
-                                        <th></th>
-                                        <th>Mon</th>
-                                        <th>Tue</th>
-                                        <th>Wed</th>
-                                        <th>Thu</th>
-                                        <th>Fri</th>
-                                        <th>Sat</th>
-                                        <th>Sun</th>
+                                        <th>Availability:</th>
+                                        <td>Mon</td>
+                                        <td>Tue</td>
+                                        <td>Wed</td>
+                                        <td>Thu</td>
+                                        <td>Fri</td>
+                                        <td>Sat</td>
+                                        <td>Sun</td>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td>Morning (8am-12pm)</td>
+                                        <td className="table__first-column">Morning (8am-12pm)</td>
                                         {filterAvailabilities(this.props.availabilities, 'Morning').map((availability) => (
                                             <td key={availability.recordId}>
                                                 <input 
@@ -150,7 +165,7 @@ export class ProfilePage extends React.Component {
                                         ))}
                                     </tr>
                                     <tr>
-                                        <td>Afternoon (12pm-5pm)</td>
+                                        <td className="table__first-column">Afternoon (12pm-5pm)</td>
                                         {filterAvailabilities(this.props.availabilities, 'Afternoon').map((availability) => (
                                             <td key={availability.recordId}>
                                                 <input 
@@ -164,7 +179,7 @@ export class ProfilePage extends React.Component {
                                         ))}
                                     </tr>
                                     <tr>
-                                        <td>Evening (5pm-10pm)</td>
+                                        <td className="table__first-column">Evening (5pm-10pm)</td>
                                         {filterAvailabilities(this.props.availabilities, 'Evening').map((availability) => (
                                             <td key={availability.recordId}>
                                                 <input 
@@ -178,7 +193,7 @@ export class ProfilePage extends React.Component {
                                         ))}
                                     </tr>
                                     <tr>
-                                        <td>Late Night (10pm-2am)</td>
+                                        <td className="table__first-column">Late Night (10pm-2am)</td>
                                         {filterAvailabilities(this.props.availabilities, 'Late Night').map((availability) => (
                                             <td key={availability.recordId}>
                                                 <input 
@@ -211,7 +226,8 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-    startUpdateUser: (user) => dispatch(startUpdateUser(user))
+    startUpdateUser: (user) => dispatch(startUpdateUser(user)),
+    startUpdateUserLocation: (user) => dispatch(startUpdateUserLocation(user))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProfilePage);

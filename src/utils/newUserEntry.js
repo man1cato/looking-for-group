@@ -1,37 +1,23 @@
 //*******WHEN A NEW USER REGISTERS, RUN THIS SCRIPT********//
-var {geolocate} = require('./geolocate-user-new.js');
-const updateGroups = require('./update-groups-new.js');
-const groupAvailability = require('./group-availability-new.js');
-const getVenues = require('./get-venues-new.js');
-const events = require('./create-events-new.js');
-const chats = require('./create-chat-new.js');
+import geolocateUser from './geolocate-user-v3.js';
+// import addUserToGroups from './update-groups-new.js';
+// import updateGroupAvailability from './group-availability-new.js';
+// import addVenues from './get-venues-new.js';
+// import setEventTime from './create-events-new.js';
+// import createGroupMe from './create-chat-new.js';
 
-var userRecordId = 'recxN6MeBrh2lRCfW';
 
-//1. GEOLOCATE AND ASSIGN AREA
-geolocate(userRecordId)
-  
-//2. ADD TO GROUPS BASED ON INTERESTS AND AREA
-.then((userRecordId)=>{
-    return updateGroups.addUserToGroups(userRecordId);                           //WILL RETURN AN AREA RECORD ID CORRESPONDING TO THE GROUPS
-})
+const newUser = async ({recordId, postalCode}) => {
+    try {
+        await geolocateUser(recordId, postalCode);                                        //1. GEOLOCATE AND ASSIGN AREA
+        // const areaRecordId = await addUserToGroups(recordId);                   //2. ADD TO GROUPS BASED ON INTERESTS AND AREA - WILL RETURN AN AREA RECORD ID CORRESPONDING TO THE GROUPS
+        // await updateGroupAvailability(areaRecordId);                            //3. UPDATE GROUP AVAILABILITY
+        // await addVenues();                                                      //4. ADD VENUES TO NEW GROUPS
+        // await setEventTime();                                                   //5. UPDATE/CREATE EVENTS BASED ON UPDATED/CREATED GROUPS
+        // createGroupMe();                                                        //6. UPDATE/CREATE CHAT GROUPS BASED ON UPDATED/CREATED EVENTS
+    } catch (e) {
+        throw new Error('Update scripts failed');
+    }
+};
 
-//3. UPDATE GROUP AVAILABILITY
-.then((areaRecordId)=>{
-    return groupAvailability.populateGroupAvailability(areaRecordId); 
-})
-
-// 4. ADD VENUES TO NEW GROUPS AND UPDATE/CREATE EVENTS BASED ON UPDATED/CREATED GROUPS
-.then(()=>{
-    console.log('ACHIEVED STEP 4');
-    getVenues.addVenues();
-    return events.setEventTime();
-})
-
-//5. UPDATE/CREATE CHAT GROUPS BASED ON UPDATED/CREATED EVENTS
-.then(()=>{
-    chats.createGroupMe();
-})
-.catch((err)=>{
-  console.log('ERROR:',err); 
-});
+export default newUser;

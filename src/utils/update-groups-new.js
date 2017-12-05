@@ -9,7 +9,7 @@ exports.addUserToGroups = function(userRecordId){
                 var userRecordID = record.getId();
                 var userArea = record.get('Area');
                 var interests = record.get('All Interests').split(",");
-                console.log(record.get('Full Name'),userRecordID,userArea,interests);
+                console.log(record.get('Full Name'), userRecordID, userArea, interests);
                 
                 interests.forEach(function(interest){                           //FOR EACH INTEREST & AREA, CHECK TO SEE IF GROUP EXISTS
                     var formula = `AND({Interest} = "${interest}", {Area Record ID} = "${userArea}")`;

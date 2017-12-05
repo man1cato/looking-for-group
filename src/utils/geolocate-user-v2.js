@@ -1,6 +1,6 @@
-var Airtable = require('airtable');
-var base = new Airtable({apiKey: 'keyzG8AODPdzdkhjG'}).base('appOY7Pr6zpzhQs6l');
-var locationBase = new Airtable({apiKey: 'keyzG8AODPdzdkhjG'}).base('appRj3ISj9TSjRvot');
+import Airtable from 'airtable';
+const base = new Airtable({apiKey: 'keyzG8AODPdzdkhjG'}).base('appOY7Pr6zpzhQs6l');
+const locationBase = new Airtable({apiKey: 'keyzG8AODPdzdkhjG'}).base('appRj3ISj9TSjRvot');
 const googleMapsClient = require('@google/maps').createClient({
   key: 'AIzaSyAF7euYoPETRn3zBzuk2bPTit2QS-R6ncc',
   Promise: Promise 
@@ -10,9 +10,9 @@ const googleMapsClient = require('@google/maps').createClient({
 //**PRIMARY FUNCTION**//
 
 //UPDATE LOCATION FIELDS FOR USER
-let updateUserLocationFields = async (userRecordId) => {
+const updateUserLocationFields = async (userRecordId) => {
     const postalCode = await getPostalCode(userRecordId); 
-    const locationDetails = getLocationDetails(postalCode); 
+    const locationDetails = await getLocationDetails(postalCode); 
     const msaCode = await getMSACode(locationDetails);
     const areaRecordId = await getAreaRecordId(msaCode);
     
@@ -32,10 +32,10 @@ let updateUserLocationFields = async (userRecordId) => {
 };
 
 
-//**UTILITY FUNCTIONS**//
+//**HELPER FUNCTIONS**//
 
 //FIND SELECTED USER AND RETURN POSTAL CODE
-let getPostalCode = (userRecordId) => {
+const getPostalCode = (userRecordId) => {
     return new Promise((resolve,reject) => {
         base('Users').find(userRecordId, function(err, record) {
             if (err) { console.error('User not found', err); return; }
@@ -48,7 +48,7 @@ let getPostalCode = (userRecordId) => {
 
     
 //GET LOCATION INFO FROM POSTAL CODE 
-let getLocationDetails = async (postalCode) => {
+const getLocationDetails = async (postalCode) => {
     const placesResponse = await googleMapsClient.places({query: `${postalCode}`});                             //DO A PLACES SEARCH ON THE POSTAL CODE TO RETURN PLACEID
     const placeResponse = await googleMapsClient.place({placeid: placesResponse.json.results[0].place_id});     //DO A PLACE DETAILS LOOKUP USING PLACEID TO RETURN OBJECT CONTAINING PLACE DETAILS
     
@@ -85,7 +85,7 @@ let getLocationDetails = async (postalCode) => {
 };
 
 //FIND COUNTY IN "LOCATION DATA" BASE AND RETURN MSA
-let getMSACode = (locationDetails) => {
+const getMSACode = (locationDetails) => {
     var county = locationDetails.county;
     var state = locationDetails.state;
     var locationFormula = `Location = "${county.trim()}, ${state.trim()}"`;
@@ -102,7 +102,7 @@ let getMSACode = (locationDetails) => {
 };
 
 //FIND MSA IN "LFG BASE" AND RETURN PROMISE WITH RECORD ID
-let getAreaRecordId = (msaCode) => {
+const getAreaRecordId = (msaCode) => {
     var filterFormula = `{MSA Code} = "${msaCode}"`;
     
     return new Promise((resolve,reject)=> {

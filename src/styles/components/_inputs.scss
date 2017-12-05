@@ -19,3 +19,15 @@
     @extend .select;
     height: 150px;
 }
+
+.table {
+    border-spacing: $s-size;
+    text-align: center;
+    th {
+        text-align: left;
+    }
+}
+
+.table__first-column {
+    text-align: left
+}

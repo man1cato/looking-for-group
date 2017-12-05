@@ -13,6 +13,7 @@
     "heroku-postbuild": "yarn run build:prod"
   },
   "dependencies": {
+    "@google/maps": "^0.4.5",
     "airtable": "^0.5.0",
     "axios": "^0.17.1",
     "babel-cli": "^6.26.0",

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import geolocateUser from '../utils/geolocate-user-v3';
 
 const baseUrl = 'https://api.airtable.com/v0/appOY7Pr6zpzhQs6l';
 const apiKey= 'keyzG8AODPdzdkhjG';
@@ -39,7 +40,7 @@ export const startSetUser = ({uid, email}) => {
                 }
                 dispatch(setUser(user));
             } else {
-                const user = { email };
+                const user = { uid, email };
                 dispatch(setUser(user));
             }
         } catch (e) {
@@ -55,20 +56,34 @@ export const updateUser = (user) => ({
 });
 
 export const startUpdateUser = (user) => {
+    const fields = {
+        "First Name": user.firstName,
+        "Last Name": user.lastName,
+        "Postal Code": user.postalCode,
+        "Birth Year": Number(user.birthYear),
+        "#1 Interest": [user.interest1],
+        "#2 Interest": [user.interest2],
+        "#3 Interest": [user.interest3],
+        "Availability": user.availability
+    };
     return (dispatch) => {
-        axios.patch(
-            `${baseUrl}/Users/${user.recordId}?api_key=${apiKey}`,
-            {"fields": {
-                "First Name": user.firstName,
-                "Last Name": user.lastName,
-                "Postal Code": user.postalCode,
-                "Birth Year": Number(user.birthYear),
-                "#1 Interest": [user.interest1],
-                "#2 Interest": [user.interest2],
-                "#3 Interest": [user.interest3],
-                "Availability": user.availability
-            }}
-        );
+        if (user.recordId) {
+            axios.patch(`${baseUrl}/Users/${user.recordId}?api_key=${apiKey}`, {"fields": fields});
+        } else {
+            axios.post(`${baseUrl}/Users?api_key=${apiKey}`, {"fields": {"Email": user.email, "Firebase ID": user.uid, ...fields}});
+        }
         dispatch(updateUser(user));
     };
 };
+
+//UPDATE USER'S AREA
+// export const updateUserLocation = (postalCode) => ({
+//     type: 'UPDATE_USER_AREA',
+//     postalCode
+// });
+
+// export const startUpdateUserLocation = ({recordId, postalCode}) => {
+//     // return (dispatch) => {
+//         geolocateUser(recordId, postalCode);
+//     // };
+// };
