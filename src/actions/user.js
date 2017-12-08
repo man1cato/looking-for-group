@@ -1,5 +1,5 @@
 import axios from 'axios';
-import geolocateUser from '../utils/geolocate-user-v3';
+// import geolocateUser from '../utils/geolocateUser';
 
 const baseUrl = 'https://api.airtable.com/v0/appOY7Pr6zpzhQs6l';
 const apiKey= 'keyzG8AODPdzdkhjG';

@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import {startUpdateUser, startUpdateUserLocation} from '../actions/user';
 // import InterestSelector from './InterestSelector';
 import filterAvailabilities from '../utils/filterAvailabilities';
-
+import geolocateUser from '../utils/geolocateUser';
 
 export class ProfilePage extends React.Component {
     constructor(props) {
@@ -40,7 +40,6 @@ export class ProfilePage extends React.Component {
     onAvailabilityChange = (e) => {
         const checked = e.target.checked;
         const changedAvailability = e.target.name;
-        console.log('changedAvailability:',changedAvailability);
         if (checked) {
             this.setState(() => ({ availability: [changedAvailability, ...this.state.availability] }));
             console.log('checked after:',this.state.availability);
@@ -51,12 +50,23 @@ export class ProfilePage extends React.Component {
     }
     onSubmit = (e) => {
         e.preventDefault();
-        // if (this.state.user.postalCode !== this.props.postalCode) {             //IF POSTAL CODE CHANGES, TRIGGER LOCATION DATA UPDATES
-        //     this.props.startUpdateUserLocation(this.state);
-        // }
+        if (this.state.postalCode !== this.props.user.postalCode) {
+            const script = document.createElement('script');
+            script.innerHTML = `getPlaceDetails('${this.state.recordId}','${this.state.postalCode}')`;
+            document.body.appendChild(script);
+            setTimeout(() => {
+                const placeDetails = JSON.parse(document.getElementById('placeDetails').textContent);
+                geolocateUser(this.state.recordId, placeDetails);
+            }, 2000);
+            
+        }
+        const snackbar = document.getElementById("snackbar");
+        snackbar.className = "snackbar--show";
+        setTimeout(() => { snackbar.className = snackbar.className.replace("snackbar--show", ""); }, 2000);
+        
         this.props.startUpdateUser(this.state);
-        this.props.history.push('/');
-        console.log(this.state);
+        setTimeout(() => {this.props.history.push('/')}, 5000);
+        console.log('Dispatched state:', this.state);
     };
     render() {
         return (
@@ -210,10 +220,12 @@ export class ProfilePage extends React.Component {
                             </table>
                         </div>
                         <div>
-                            <button className="button">Save Profile</button>
+                            <button id="profile-button" className="button">Save Profile</button>
                         </div>
+                        <div id="map"></div>
                     </form>
                 </div>
+                <div className="snackbar" id="snackbar">Profile has been updated! Redirecting to dashboard...</div>
             </div>
         );
     }
@@ -231,14 +243,3 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProfilePage);
-
-
-                            // <select 
-//                                 className="multiple-select" 
-//                                 name="availability" 
-//                                 size="6" 
-//                                 multiple
-//                                 defaultValue={['recDmj0waZL3td5fS','recmiujOyHwlG42hH']}
-//                             >
-//                                 {this.props.availabilities.map((availabilities) => (<option key={availabilities.recordId} value={availabilities.recordId}>{availabilities.name}</option>) )}
-//                             </select>
