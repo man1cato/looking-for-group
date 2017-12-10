@@ -2,7 +2,9 @@ import React from 'react';
 import {connect} from 'react-redux';
 import moment from 'moment';
 import _ from 'lodash';
-import {startUpdateUser, startUpdateUserArea, startUpdateUsersGroups} from '../actions/user';
+import {startUpdateUser} from '../actions/user';
+import updateAirtable from '../utils/updateAirtable';
+
 // import InterestSelector from './InterestSelector';
 import filterInterests from '../utils/filterInterests';
 import filterAvailabilities from '../utils/filterAvailabilities';
@@ -79,7 +81,7 @@ export class ProfilePage extends React.Component {
             
             setTimeout(() => {
                 const placeDetails = JSON.parse(document.getElementById('placeDetails').textContent);
-                this.props.startUpdateUserArea(this.state, placeDetails);                      //UPDATE USER'S AREA
+                updateAirtable(this.state, placeDetails);                      //UPDATE AIRTABLE
                 document.body.removeChild(scriptBlock);                         //DELETE <DIV> BLOCK TO CLEAR DATA
             }, 2000);
         } 
@@ -88,9 +90,9 @@ export class ProfilePage extends React.Component {
         
         const snackbar = document.getElementById("snackbar");
         snackbar.className = "snackbar--show";
-        setTimeout(() => { snackbar.className = snackbar.className.replace("snackbar--show", ""); }, 2000);
+        setTimeout(() => { snackbar.className = snackbar.className.replace("snackbar--show", ""); }, 1000);
         
-        setTimeout(() => {this.props.history.push('/')}, 6000);
+        setTimeout(() => {this.props.history.push('/')}, 5000);
     };
     render() {
         return (

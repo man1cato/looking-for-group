@@ -1,6 +1,7 @@
 import axios from 'axios';
 import geolocateUser from '../utils/geolocateUser';
 import addUserToGroups from '../utils/addUserToGroups';
+import updateAirtable from '../utils/updateAirtable';
 
 const baseUrl = 'https://api.airtable.com/v0/appOY7Pr6zpzhQs6l';
 const apiKey= 'keyzG8AODPdzdkhjG';
@@ -86,35 +87,30 @@ export const startUpdateUser = (user) => {
 };
 
 
-//UPDATE_USER_AREA  
-export const updateUserArea = (area) => ({
-    type: 'UPDATE_USER_AREA',
-    area
-});
+// //UPDATE_USER_AREA  
+// export const updateUserArea = (area) => ({
+//     type: 'UPDATE_USER_AREA',
+//     area
+// });
 
-export const startUpdateUserArea = (user, placeDetails) => {
-    const userRecordId = user.recordId;
-    const userInterests = [user.interest1, user.interest2, user.interest3, ...user.additionalInterests];
-    return async (dispatch) => {
-        try {
-            const areaRecordId = await geolocateUser(userRecordId, placeDetails);
-            const usersGroups = await addUserToGroups(userRecordId, userInterests, areaRecordId);
-            dispatch(updateUser({...user, area: areaRecordId, groups: usersGroups}));
-        } catch (e) {
-            throw new Error('Error at addUserToGroups within startUpdateUserArea');
-        }
-    };
-};
-
-//UPDATE_USERS_GROUPS
-export const updateUsersGroups = (groups) => ({
-    type: 'UPDATE_USERS_GROUPS',
-    groups
-});
-
-export const startUpdateUsersGroups = (userRecordId, userInterests, areaRecordId) => {
-    return async (dispatch) => {
-        const usersGroups = await addUserToGroups(userRecordId, userInterests, areaRecordId);
-        dispatch(updateUsersGroups(usersGroups));
-    };
-};
+// export const startUpdateUserArea = (user, placeDetails) => {
+//     // const userRecordId = user.recordId;
+//     // const userInterests = user.allInterests;
+//     return (dispatch) => {
+//         updateAirtable(user, placeDetails);
+//         dispatch(updateUser(user));
+//     };
+//     // return async (dispatch) => {
+//     //     try {
+//     //         const areaRecordId = await geolocateUser(userRecordId, placeDetails);
+//     //         const usersGroups = await addUserToGroups(userRecordId, userInterests, areaRecordId);
+//     //         // for (let groupRecordId of usersGroups) {                                        //3. UPDATE GROUP AVAILABILITY
+//     //         //     const group = await axios.get(`${baseUrl}/Groups/${groupRecordId}?api_key=${apiKey}`);
+//     //         //     await updateGroupAvailability(group, userAvailability);                                 
+//     //         // }
+//     //         dispatch(updateUser({...user, area: areaRecordId, groups: usersGroups}));
+//     //     } catch (e) {
+//     //         throw new Error('Error at addUserToGroups within startUpdateUserArea');
+//     //     }
+//     // };
+// };

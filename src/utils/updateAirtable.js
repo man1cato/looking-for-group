@@ -9,17 +9,20 @@ import updateGroupAvailability from './updateGroupAvailability';
 // import createGroupMe from './create-chat-new.js';
 
 const apiKey = 'keyzG8AODPdzdkhjG';
-const lfgBaseUrl = 'https://api.airtable.com/v0/appOY7Pr6zpzhQs6l';
+const baseUrl = 'https://api.airtable.com/v0/appOY7Pr6zpzhQs6l';
 
 
-const newUser = async ({recordId, interests, postalCode}) => {
+const updateAirtable = async ({recordId, allInterests, availability}, placeDetails) => {
     try {
-        const areaRecordId = await geolocateUser(recordId, postalCode);             //1. GEOLOCATE AND ASSIGN AREA
-        await addUserToGroups(recordId, interests, areaRecordId);                   //2. ADD TO GROUPS BASED ON INTERESTS AND AREA
+        const areaRecordId = await geolocateUser(recordId, placeDetails);                 //1. GEOLOCATE AND ASSIGN AREA
+        const usersGroups = await addUserToGroups(recordId, allInterests, areaRecordId);   //2. ADD TO GROUPS BASED ON INTERESTS AND AREA
         
-        const user = await axios.get(`${lfgBaseUrl}/Users/${recordId}?api_key=${apiKey}`);
-        const usersGroups = user.data.fields.Groups;
-        await updateGroupAvailability(usersGroups);                                 //3. UPDATE GROUP AVAILABILITY
+        for (let groupRecordId of usersGroups) {                                        //3. UPDATE GROUP AVAILABILITY
+            const groupResponse = await axios.get(`${baseUrl}/Groups/${groupRecordId}?api_key=${apiKey}`);
+            const group = groupResponse.data;
+            updateGroupAvailability(group, availability);                                 
+        }
+        
         // await addVenues();                                                      //4. ADD VENUES TO NEW GROUPS
         // await setEventTime();                                                   //5. UPDATE/CREATE EVENTS BASED ON UPDATED/CREATED GROUPS
         // createGroupMe();                                                        //6. UPDATE/CREATE CHAT GROUPS BASED ON UPDATED/CREATED EVENTS
@@ -28,4 +31,4 @@ const newUser = async ({recordId, interests, postalCode}) => {
     }
 };
 
-export default newUser;
+export default updateAirtable;
