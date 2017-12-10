@@ -1,5 +1,4 @@
 import axios from 'axios';
-import _ from 'lodash';
 
 const baseUrl = 'https://api.airtable.com/v0/appOY7Pr6zpzhQs6l';
 const apiKey = 'keyzG8AODPdzdkhjG';

@@ -1,7 +1,4 @@
 import axios from 'axios';
-import geolocateUser from '../utils/geolocateUser';
-import addUserToGroups from '../utils/addUserToGroups';
-import updateAirtable from '../utils/updateAirtable';
 
 const baseUrl = 'https://api.airtable.com/v0/appOY7Pr6zpzhQs6l';
 const apiKey= 'keyzG8AODPdzdkhjG';
@@ -48,9 +45,15 @@ export const startSetUser = ({uid, email}) => {
                     axios.patch(`${baseUrl}/Users/${user.recordId}?api_key=${apiKey}`, {"fields": {"Firebase ID": uid} } );
                 }
                 dispatch(setUser(user));
+                return user;
             } else {
-                const user = { uid, email };
+                const postResponse = await axios.post(`${baseUrl}/Users?api_key=${apiKey}`, {"fields": {"Email": email, "Firebase ID": uid}});
+                const user = {
+                    recordId: postResponse.data.id,
+                    email
+                };
                 dispatch(setUser(user));
+                return user;
             }
         } catch (e) {
             throw new Error('Call to Airtable Users table failed');

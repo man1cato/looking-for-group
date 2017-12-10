@@ -1,7 +1,7 @@
 import {createStore, combineReducers, applyMiddleware, compose} from 'redux';
 import thunk from 'redux-thunk';
 import authReducer from '../reducers/auth';
-import areasReducer from '../reducers/areas';
+import groupsReducer from '../reducers/groups';
 import userReducer from '../reducers/user';
 import interestsReducer from '../reducers/interests';
 import availabilitiesReducer from '../reducers/availabilities';
@@ -12,7 +12,7 @@ export default () => {
     const store = createStore(
         combineReducers({
             auth: authReducer,
-            areas: areasReducer,
+            groups: groupsReducer,
             user: userReducer,
             interests: interestsReducer,
             availabilities: availabilitiesReducer

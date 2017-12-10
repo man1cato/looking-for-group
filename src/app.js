@@ -7,7 +7,7 @@ import configureStore from './store/configureStore';
 import {firebase} from './firebase/firebase';
 import {login, logout} from './actions/auth';
 import {startSetUser} from './actions/user';
-import {startGetAreas} from './actions/areas';
+import {startGetGroups} from './actions/groups';
 import {startGetInterests} from './actions/interests';
 import {startGetAvailabilities} from './actions/availabilities';
 import LoadingPage from './components/LoadingPage';
@@ -43,11 +43,11 @@ firebase.auth().onAuthStateChanged((user) => {
     if (user) {
         console.log('logged in');
         store.dispatch(login(user.uid));
-        store.dispatch(startGetAreas('Alpha Test List')).then(() => {
+        store.dispatch(startSetUser(user)).then((userData) => {
+            console.log('user from app:', userData);
+            store.dispatch(startGetAvailabilities());
             store.dispatch(startGetInterests());
-            return store.dispatch(startSetUser(user));
-        }).then(() => {
-            return store.dispatch(startGetAvailabilities());
+            return store.dispatch(startGetGroups(userData.groups));
         }).then(() => {
             renderApp();
             if (history.location.pathname === '/') {
