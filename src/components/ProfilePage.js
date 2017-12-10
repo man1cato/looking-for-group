@@ -1,10 +1,15 @@
 import React from 'react';
 import {connect} from 'react-redux';
+import moment from 'moment';
+import _ from 'lodash';
 import {startUpdateUser, startUpdateUserArea, startUpdateUsersGroups} from '../actions/user';
 // import InterestSelector from './InterestSelector';
+import filterInterests from '../utils/filterInterests';
 import filterAvailabilities from '../utils/filterAvailabilities';
 import geolocateUser from '../utils/geolocateUser';
 import addUserToGroups from '../utils/addUserToGroups';
+
+const currentYear = moment().year();
 
 export class ProfilePage extends React.Component {
     constructor(props) {
@@ -16,33 +21,42 @@ export class ProfilePage extends React.Component {
             firstName: props.user.firstName ? props.user.firstName : '',
             lastName: props.user.lastName ? props.user.lastName : '',
             postalCode: props.user.postalCode ? props.user.postalCode : '',
-            birthYear: props.user.birthYear ? props.user.birthYear : 1990,
+            birthYear: props.user.birthYear ? props.user.birthYear : currentYear,
             interest1: props.user.interest1 ? props.user.interest1 : '',
             interest2: props.user.interest2 ? props.user.interest2 : '',
             interest3: props.user.interest3 ? props.user.interest3 : '',
             additionalInterests: props.user.additionalInterests ? props.user.additionalInterests : [],
+            allInterests: props.user.allInterests,
             availability: props.user.availability ? props.user.availability : '',
             area: props.user.area,
             groups: props.user.groups 
         };
     };
     onTextChange = (e) => {
-        const name = e.target.name;
+        const id = e.target.id;
         const value = e.target.value;
-        this.setState(() => ({ [name]: value }));
-    };
-    onBirthYearChange = (e) => {
-        const birthYear = e.target.value;
-        this.setState(() => ({ birthYear }));
+        this.setState(() => ({ [id]: value }));
     };
     onInterestChange = (e) => {
-        const name = e.target.name;
+        const id = e.target.id;
         const value = e.target.value;
-        this.setState(() => ({ [name]: value }));
+        const interest1 = id === 'interest1' ? this.state.interest1 : value;
+        const interest2 = id === 'interest2' ? this.state.interest2 : value;
+        const interest3 = id === 'interest3' ? this.state.interest3 : value;
+        const additionalInterests = this.state.additionalInterests;
+        const values = additionalInterests.filter((interest) => interest !== value);
+        const allInterests = [interest1, interest2, interest3, ...values];
+        this.setState(() => ({ [id]: value, additionalInterests: values, allInterests }));
+    }
+    onOtherInterestsChange = (e) => {
+        const selected = document.querySelectorAll('#additionalInterests option:checked');
+        const values = Array.from(selected).map((el) => el.value);
+        const allInterests = [this.state.interest1, this.state.interest2, this.state.interest3, ...values];
+        this.setState(() => ({ additionalInterests: values, allInterests }));
     }
     onAvailabilityChange = (e) => {
         const checked = e.target.checked;
-        const changedAvailability = e.target.name;
+        const changedAvailability = e.target.id;
         if (checked) {
             this.setState(() => ({ availability: [changedAvailability, ...this.state.availability] }));
             console.log('checked after:',this.state.availability);
@@ -53,7 +67,7 @@ export class ProfilePage extends React.Component {
     }
     onSubmit = (e) => {
         e.preventDefault();
-        if (this.state.postalCode !== this.props.user.postalCode) {
+        if (this.state.postalCode !== this.props.user.postalCode || this.state.allInterests !== this.props.user.allInterests) {
             
             const scriptBlock = document.createElement('div');          //CREATE <DIV> TO HOLD TEMPORARY DATA
             scriptBlock.id = 'scriptBlock';
@@ -70,14 +84,13 @@ export class ProfilePage extends React.Component {
             }, 2000);
         } 
         
-        setTimeout(() => {this.props.startUpdateUser(this.state)}, 6000);                                 //UPDATE USER'S PROFILE
+        setTimeout(() => {this.props.startUpdateUser(this.state)}, 4000);                                 //UPDATE USER'S PROFILE
         
         const snackbar = document.getElementById("snackbar");
         snackbar.className = "snackbar--show";
         setTimeout(() => { snackbar.className = snackbar.className.replace("snackbar--show", ""); }, 2000);
         
-        setTimeout(() => {this.props.history.push('/')}, 8000);
-        
+        setTimeout(() => {this.props.history.push('/')}, 6000);
     };
     render() {
         return (
@@ -92,14 +105,14 @@ export class ProfilePage extends React.Component {
                             Name: <input
                                 className="text-input"
                                 type="text"
-                                name="firstName"
+                                id="firstName"
                                 value={this.state.firstName}
                                 onChange={this.onTextChange}
                             />
                             <input 
                                 className="text-input"
                                 type="text"
-                                name="lastName"
+                                id="lastName"
                                 value={this.state.lastName}
                                 onChange={this.onTextChange}
                             />
@@ -108,18 +121,18 @@ export class ProfilePage extends React.Component {
                             Birth Year: <input 
                                 className="text-input"
                                 type="number" 
-                                name="birthYear" 
+                                id="birthYear" 
                                 min="1900" 
                                 max="2020"
                                 value={this.state.birthYear}
-                                onChange={this.onBirthYearChange}
+                                onChange={this.onTextChange}
                             />
                         </div>
                         <div>
                             Postal Code: <input 
                                 className="text-input"
                                 type="text" 
-                                name="postalCode"
+                                id="postalCode"
                                 value={this.state.postalCode}
                                 onChange={this.onTextChange}
                             />
@@ -127,34 +140,50 @@ export class ProfilePage extends React.Component {
                         <div>
                             #1 Interest: <select 
                                 className="select" 
-                                name="interest1" 
+                                id="interest1" 
                                 defaultValue={this.state.interest1}
                                 onChange={this.onInterestChange}
                             >
                                 <option key="0" value=""></option>          //blank option
-                                {this.props.interests.map((interest) => (<option key={interest.id} value={interest.id}>{interest.name}</option>) )}
+                                {this.props.interests.map( (interest) => (<option key={interest.id} value={interest.id}>{interest.name}</option>) )}
                             </select>
                         </div>
                         <div>
                             #2 Interest: <select 
                                 className="select" 
-                                name="interest2" 
+                                id="interest2" 
                                 defaultValue={this.state.interest2}
                                 onChange={this.onInterestChange}
                             >
                                 <option key="0" value=""></option>          //blank option
-                                {this.props.interests.map((interest) => (<option key={interest.id} value={interest.id}>{interest.name}</option>) )}
+                                {this.props.interests.map( (interest) => (<option key={interest.id} value={interest.id}>{interest.name}</option>) )}
                             </select>
                         </div>
                         <div>
                             #3 Interest: <select 
                                 className="select" 
-                                name="interest3" 
+                                id="interest3" 
                                 defaultValue={this.state.interest3}
                                 onChange={this.onInterestChange}
                             >
                                 <option key="0" value=""></option>          //blank option
-                                {this.props.interests.map((interest) => (<option key={interest.id} value={interest.id}>{interest.name}</option>) )}
+                                {this.props.interests.map( (interest) => (<option key={interest.id} value={interest.id}>{interest.name}</option>) )}
+                            </select>
+                        </div>
+                        <div>
+                            Other Interests: <select 
+                                className="multiple-select" 
+                                id="additionalInterests" 
+                                size="6"
+                                defaultValue={this.state.additionalInterests}
+                                onChange={this.onOtherInterestsChange}
+                                multiple
+                            >
+                                <option key="0" value=""></option>          //blank option
+                                {
+                                    filterInterests(this.props.interests, [this.state.interest1, this.state.interest2, this.state.interest3])
+                                        .map( (interest) => (<option key={interest.id} value={interest.id}>{interest.name}</option>) )
+                                }
                             </select>
                         </div>
                         <div>
@@ -179,7 +208,7 @@ export class ProfilePage extends React.Component {
                                                 <input 
                                                     type="checkbox" 
                                                     key={availability.recordId} 
-                                                    name={availability.recordId} 
+                                                    id={availability.recordId} 
                                                     defaultChecked={this.state.availability.indexOf(availability.recordId) > -1 && true}
                                                     onChange={this.onAvailabilityChange}
                                                 />
@@ -193,7 +222,7 @@ export class ProfilePage extends React.Component {
                                                 <input 
                                                     type="checkbox" 
                                                     key={availability.recordId}
-                                                    name={availability.recordId} 
+                                                    id={availability.recordId} 
                                                     defaultChecked={this.state.availability.indexOf(availability.recordId) > -1 && true}
                                                     onChange={this.onAvailabilityChange}
                                                 />
@@ -207,7 +236,7 @@ export class ProfilePage extends React.Component {
                                                 <input 
                                                     type="checkbox" 
                                                     key={availability.recordId} 
-                                                    name={availability.recordId} 
+                                                    id={availability.recordId} 
                                                     defaultChecked={this.state.availability.indexOf(availability.recordId) > -1 && true}
                                                     onChange={this.onAvailabilityChange}
                                                 />
@@ -221,7 +250,7 @@ export class ProfilePage extends React.Component {
                                                 <input 
                                                     type="checkbox" 
                                                     key={availability.recordId} 
-                                                    name={availability.recordId} 
+                                                    id={availability.recordId} 
                                                     defaultChecked={this.state.availability.indexOf(availability.recordId) > -1 && true}
                                                     onChange={this.onAvailabilityChange}
                                                 />

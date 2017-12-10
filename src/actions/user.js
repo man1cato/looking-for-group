@@ -21,6 +21,11 @@ export const startSetUser = ({uid, email}) => {
             //IF EMAIL FOUND, GATHER PROFILE INFO
             if (response.data.records.length > 0) {
                 const userRecord = response.data.records[0];
+                const interest1 = userRecord.fields['#1 Interest'][0] ? userRecord.fields['#1 Interest'][0] : [];
+                const interest2 = userRecord.fields['#2 Interest'][0] ? userRecord.fields['#2 Interest'][0] : [];
+                const interest3 = userRecord.fields['#3 Interest'][0] ? userRecord.fields['#3 Interest'][0] : [];
+                const additionalInterests = userRecord.fields["Add'l Interests"] ? userRecord.fields["Add'l Interests"] : [];
+                const allInterests = [interest1, interest2, interest3, ...additionalInterests];
                 const user = {
                     recordId: userRecord.id,
                     firstName: userRecord.fields['First Name'],
@@ -28,10 +33,11 @@ export const startSetUser = ({uid, email}) => {
                     email,
                     postalCode: userRecord.fields['Postal Code'],
                     birthYear: userRecord.fields['Birth Year'],
-                    interest1: userRecord.fields['#1 Interest'][0],
-                    interest2: userRecord.fields['#2 Interest'][0],
-                    interest3: userRecord.fields['#3 Interest'][0],
-                    additionalInterests: userRecord.fields["Add'l Interests"],
+                    interest1,
+                    interest2,
+                    interest3,
+                    additionalInterests,
+                    allInterests,
                     availability: userRecord.fields.Availability,
                     area: userRecord.fields.Area[0],
                     groups: userRecord.fields.Groups
@@ -66,6 +72,7 @@ export const startUpdateUser = (user) => {
         "#1 Interest": [user.interest1],
         "#2 Interest": [user.interest2],
         "#3 Interest": [user.interest3],
+        "Add'l Interests": user.additionalInterests,
         "Availability": user.availability
     };
     return (dispatch) => {
@@ -92,7 +99,6 @@ export const startUpdateUserArea = (user, placeDetails) => {
         try {
             const areaRecordId = await geolocateUser(userRecordId, placeDetails);
             const usersGroups = await addUserToGroups(userRecordId, userInterests, areaRecordId);
-            console.log('Completed addUserToGroups. Dispatched:',{...user, area: areaRecordId, groups: usersGroups});
             dispatch(updateUser({...user, area: areaRecordId, groups: usersGroups}));
         } catch (e) {
             throw new Error('Error at addUserToGroups within startUpdateUserArea');
