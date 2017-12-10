@@ -10,10 +10,12 @@ exports[`should render login page correctly 1`] = `
     <h1
       className="box-layout__title"
     >
-      React Web App Template
+      Looking For Group?
     </h1>
-    <p>
-      Tagline for app.
+    <p
+      className="box-layout__subtitle"
+    >
+      Find your people here!
     </p>
     <button
       className="button"

@@ -1,17 +1,25 @@
 //*******WHEN A NEW USER REGISTERS, RUN THIS SCRIPT********//
-import geolocateUser from './geolocate-user-v3.js';
-// import addUserToGroups from './update-groups-new.js';
-// import updateGroupAvailability from './group-availability-new.js';
+import axios from 'axios';
+
+import geolocateUser from './geolocateUser';
+import addUserToGroups from './addUserToGroups';
+import updateGroupAvailability from './updateGroupAvailability';
 // import addVenues from './get-venues-new.js';
 // import setEventTime from './create-events-new.js';
 // import createGroupMe from './create-chat-new.js';
 
+const apiKey = 'keyzG8AODPdzdkhjG';
+const lfgBaseUrl = 'https://api.airtable.com/v0/appOY7Pr6zpzhQs6l';
 
-const newUser = async ({recordId, postalCode}) => {
+
+const newUser = async ({recordId, interests, postalCode}) => {
     try {
-        await geolocateUser(recordId, postalCode);                                        //1. GEOLOCATE AND ASSIGN AREA
-        // const areaRecordId = await addUserToGroups(recordId);                   //2. ADD TO GROUPS BASED ON INTERESTS AND AREA - WILL RETURN AN AREA RECORD ID CORRESPONDING TO THE GROUPS
-        // await updateGroupAvailability(areaRecordId);                            //3. UPDATE GROUP AVAILABILITY
+        const areaRecordId = await geolocateUser(recordId, postalCode);             //1. GEOLOCATE AND ASSIGN AREA
+        await addUserToGroups(recordId, interests, areaRecordId);                   //2. ADD TO GROUPS BASED ON INTERESTS AND AREA
+        
+        const user = await axios.get(`${lfgBaseUrl}/Users/${recordId}?api_key=${apiKey}`);
+        const usersGroups = user.data.fields.Groups;
+        await updateGroupAvailability(usersGroups);                                 //3. UPDATE GROUP AVAILABILITY
         // await addVenues();                                                      //4. ADD VENUES TO NEW GROUPS
         // await setEventTime();                                                   //5. UPDATE/CREATE EVENTS BASED ON UPDATED/CREATED GROUPS
         // createGroupMe();                                                        //6. UPDATE/CREATE CHAT GROUPS BASED ON UPDATED/CREATED EVENTS

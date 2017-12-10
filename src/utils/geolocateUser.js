@@ -5,7 +5,7 @@ const lfgBaseUrl = 'https://api.airtable.com/v0/appOY7Pr6zpzhQs6l';
 
 
 //UPDATE LOCATION FIELDS FOR USER
-export default function geolocateUser(recordId, placeDetails) {
+export default (recordId, placeDetails) => {
     
     const addressComponents = placeDetails.address_components;
 
@@ -25,14 +25,13 @@ export default function geolocateUser(recordId, placeDetails) {
 
     const locationFilter = `{Location}="${county}, ${state}"`;
     
-    axios.get(`https://api.airtable.com/v0/appRj3ISj9TSjRvot/Counties?filterByFormula=${locationFilter}&api_key=${apiKey}`).then((locationResponse) => {
+    return axios.get(`https://api.airtable.com/v0/appRj3ISj9TSjRvot/Counties?filterByFormula=${locationFilter}&api_key=${apiKey}`).then((locationResponse) => {
         const msaCode = locationResponse.data.records[0].fields.MSA_text;
         const msaFilter = `{MSA Code}="${msaCode}"`;
         return axios.get(`${lfgBaseUrl}/Areas?filterByFormula=${msaFilter}&api_key=${apiKey}`);
     }).then((areaResponse) => {
-        console.log('areaResponse:', areaResponse);
         const areaRecordId = areaResponse.data.records[0].id;
-        return axios.patch(`${lfgBaseUrl}/Users/${recordId}?api_key=${apiKey}`, {
+        axios.patch(`${lfgBaseUrl}/Users/${recordId}?api_key=${apiKey}`, {
             "fields": {
                 "County": county,
                 "City": city,
@@ -43,7 +42,8 @@ export default function geolocateUser(recordId, placeDetails) {
                 "Area": [areaRecordId]
             }
         });
+        return areaRecordId;
     }).catch((e) => {
         console.log('Error at geolocateUser:', e);
     });
-}
+};

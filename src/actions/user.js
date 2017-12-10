@@ -1,5 +1,6 @@
 import axios from 'axios';
-// import geolocateUser from '../utils/geolocateUser';
+import geolocateUser from '../utils/geolocateUser';
+import addUserToGroups from '../utils/addUserToGroups';
 
 const baseUrl = 'https://api.airtable.com/v0/appOY7Pr6zpzhQs6l';
 const apiKey= 'keyzG8AODPdzdkhjG';
@@ -30,8 +31,9 @@ export const startSetUser = ({uid, email}) => {
                     interest1: userRecord.fields['#1 Interest'][0],
                     interest2: userRecord.fields['#2 Interest'][0],
                     interest3: userRecord.fields['#3 Interest'][0],
+                    additionalInterests: userRecord.fields["Add'l Interests"],
                     availability: userRecord.fields.Availability,
-                    area: userRecord.fields.Area,
+                    area: userRecord.fields.Area[0],
                     groups: userRecord.fields.Groups
                 };
                 //IF FIREBASE ID NOT PRESENT IN RECORD, ADD TO RECORD
@@ -76,14 +78,37 @@ export const startUpdateUser = (user) => {
     };
 };
 
-//UPDATE USER'S AREA
-// export const updateUserLocation = (postalCode) => ({
-//     type: 'UPDATE_USER_AREA',
-//     postalCode
-// });
 
-// export const startUpdateUserLocation = ({recordId, postalCode}) => {
-//     // return (dispatch) => {
-//         geolocateUser(recordId, postalCode);
-//     // };
-// };
+//UPDATE_USER_AREA  
+export const updateUserArea = (area) => ({
+    type: 'UPDATE_USER_AREA',
+    area
+});
+
+export const startUpdateUserArea = (user, placeDetails) => {
+    const userRecordId = user.recordId;
+    const userInterests = [user.interest1, user.interest2, user.interest3, ...user.additionalInterests];
+    return async (dispatch) => {
+        try {
+            const areaRecordId = await geolocateUser(userRecordId, placeDetails);
+            const usersGroups = await addUserToGroups(userRecordId, userInterests, areaRecordId);
+            console.log('Completed addUserToGroups. Dispatched:',{...user, area: areaRecordId, groups: usersGroups});
+            dispatch(updateUser({...user, area: areaRecordId, groups: usersGroups}));
+        } catch (e) {
+            throw new Error('Error at addUserToGroups within startUpdateUserArea');
+        }
+    };
+};
+
+//UPDATE_USERS_GROUPS
+export const updateUsersGroups = (groups) => ({
+    type: 'UPDATE_USERS_GROUPS',
+    groups
+});
+
+export const startUpdateUsersGroups = (userRecordId, userInterests, areaRecordId) => {
+    return async (dispatch) => {
+        const usersGroups = await addUserToGroups(userRecordId, userInterests, areaRecordId);
+        dispatch(updateUsersGroups(usersGroups));
+    };
+};

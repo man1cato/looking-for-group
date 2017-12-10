@@ -5,6 +5,10 @@ const userReducer = (state = [], action) => {
             return action.user;
         case 'UPDATE_USER':
             return action.user;
+        case 'UPDATE_USER_AREA':
+            return action.area;   
+        case 'UPDATE_USERS_GROUPS':
+            return action.groups;
         default:
             return state;
     }
