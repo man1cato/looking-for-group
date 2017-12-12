@@ -10,7 +10,7 @@ export default async (userRecordId, userInterests, areaRecordId) => {
         const groupsFilter = `AND({Interest Record ID}="${interestRecordId}",{Area Record ID}="${areaRecordId}")`;
         const groupsResponse = await axios.get(`${baseUrl}/Groups?filterByFormula=${groupsFilter}&api_key=${apiKey}`);   //...FIND GROUP CORRESPONDING TO AREA AND INTEREST...
         const group = groupsResponse.data.records[0];
-        console.log('addUserToGroups group:', group);
+        // console.log('addUserToGroups group:', group);
         if (!group) {                                                                                       //IF GROUP NOT FOUND... 
             const postResponse = await axios.post(`${baseUrl}/Groups?api_key=${apiKey}`,{                   //...CREATE NEW GROUP...
                 "fields": {
@@ -24,7 +24,7 @@ export default async (userRecordId, userInterests, areaRecordId) => {
             usersGroups.push(group.id);                                     //...PUSH GROUP INTO GROUP ARRAY 
         }
     }
-    console.log('usersGroups:',usersGroups);
+    console.log('usersGroups from addUserToGroups:',usersGroups);
     axios.patch(`${baseUrl}/Users/${userRecordId}?api_key=${apiKey}`,{      //FINALLY, UPDATE USER'S GROUPS
         "fields": {
             "Groups": usersGroups

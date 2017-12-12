@@ -4,3 +4,4 @@ react-lfg.js
 public/dist/
 .env.test
 .env.development
+playground.js

@@ -27,6 +27,6 @@ export const GroupList = (props) => (
 
 // const mapStateToProps = (state) =>  state.areas;
 
-const mapStateToProps = (state) => ({ groups: state.groups });
+const mapStateToProps = (state) => ({ groups: state.user.groups });
 
 export default connect(mapStateToProps)(GroupList);

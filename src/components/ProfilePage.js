@@ -2,16 +2,15 @@ import React from 'react';
 import {connect} from 'react-redux';
 import moment from 'moment';
 import _ from 'lodash';
-import {startUpdateUser} from '../actions/user';
+import {startUpdateUser, startUpdateGroups} from '../actions/user';
+// import {startUpdateGroups} from '../actions/groups';
 import updateAirtable from '../utils/updateAirtable';
 
 // import InterestSelector from './InterestSelector';
 import filterInterests from '../utils/filterInterests';
 import filterAvailabilities from '../utils/filterAvailabilities';
 import geolocateUser from '../utils/geolocateUser';
-import addUserToGroups from '../utils/addUserToGroups';
 
-const currentYear = moment().year();
 
 export class ProfilePage extends React.Component {
     constructor(props) {
@@ -20,16 +19,16 @@ export class ProfilePage extends React.Component {
             uid: props.user.uid,
             email: props.user.email,
             recordId: props.user.recordId,
-            firstName: props.user.firstName ? props.user.firstName : '',
-            lastName: props.user.lastName ? props.user.lastName : '',
-            postalCode: props.user.postalCode ? props.user.postalCode : '',
-            birthYear: props.user.birthYear ? props.user.birthYear : currentYear,
-            interest1: props.user.interest1 ? props.user.interest1 : '',
-            interest2: props.user.interest2 ? props.user.interest2 : '',
-            interest3: props.user.interest3 ? props.user.interest3 : '',
-            additionalInterests: props.user.additionalInterests ? props.user.additionalInterests : [],
+            firstName: props.user.firstName || '',
+            lastName: props.user.lastName || '',
+            postalCode: props.user.postalCode || '',
+            birthYear: props.user.birthYear || moment().year(),
+            interest1: props.user.interest1 || '',
+            interest2: props.user.interest2 || '',
+            interest3: props.user.interest3 || '',
+            additionalInterests: props.user.additionalInterests || [],
             allInterests: props.user.allInterests,
-            availability: props.user.availability ? props.user.availability : '',
+            availability: props.user.availability || '',
             area: props.user.area,
             groups: props.user.groups 
         };
@@ -42,19 +41,19 @@ export class ProfilePage extends React.Component {
     onInterestChange = (e) => {
         const id = e.target.id;
         const value = e.target.value;
-        const interest1 = id === 'interest1' ? this.state.interest1 : value;
-        const interest2 = id === 'interest2' ? this.state.interest2 : value;
-        const interest3 = id === 'interest3' ? this.state.interest3 : value;
+        const interest1 = id === 'interest1' ? value : this.state.interest1;
+        const interest2 = id === 'interest2' ? value : this.state.interest2;
+        const interest3 = id === 'interest3' ? value : this.state.interest3;
         const additionalInterests = this.state.additionalInterests;
         const values = additionalInterests.filter((interest) => interest !== value);
         const allInterests = [interest1, interest2, interest3, ...values];
-        this.setState(() => ({ [id]: value, additionalInterests: values, allInterests }));
+        this.setState(() => ({ [id]: value, additionalInterests: values, allInterests: _.compact(allInterests) }));
     }
     onOtherInterestsChange = (e) => {
         const selected = document.querySelectorAll('#additionalInterests option:checked');
         const values = Array.from(selected).map((el) => el.value);
         const allInterests = [this.state.interest1, this.state.interest2, this.state.interest3, ...values];
-        this.setState(() => ({ additionalInterests: values, allInterests }));
+        this.setState(() => ({ additionalInterests: _.compact(values), allInterests: _.compact(allInterests) }));
     }
     onAvailabilityChange = (e) => {
         const checked = e.target.checked;
@@ -81,18 +80,21 @@ export class ProfilePage extends React.Component {
             
             setTimeout(() => {
                 const placeDetails = JSON.parse(document.getElementById('placeDetails').textContent);
-                updateAirtable(this.state, placeDetails);                      //UPDATE AIRTABLE
+                console.log('placeDetails:',placeDetails)
+                this.props.startUpdateUser(this.state, placeDetails);                                 //UPDATE USER'S PROFILE
+                // updateAirtable(this.state, placeDetails);                      //UPDATE AIRTABLE
+                // this.props.startUpdateGroups(this.state);
                 document.body.removeChild(scriptBlock);                         //DELETE <DIV> BLOCK TO CLEAR DATA
             }, 2000);
-        } 
-        
-        setTimeout(() => {this.props.startUpdateUser(this.state)}, 4000);                                 //UPDATE USER'S PROFILE
+        } else {
+            setTimeout(() => {this.props.startUpdateUser(this.state)}, 2000);                                 //UPDATE USER'S PROFILE
+        }
         
         const snackbar = document.getElementById("snackbar");
         snackbar.className = "snackbar--show";
         setTimeout(() => { snackbar.className = snackbar.className.replace("snackbar--show", ""); }, 1000);
         
-        setTimeout(() => {this.props.history.push('/')}, 5000);
+        setTimeout(() => {this.props.history.push('/')}, 4000);
     };
     render() {
         return (
@@ -146,7 +148,7 @@ export class ProfilePage extends React.Component {
                                 defaultValue={this.state.interest1}
                                 onChange={this.onInterestChange}
                             >
-                                <option key="0" value=""></option>          //blank option
+                                <option></option>          //blank option
                                 {this.props.interests.map( (interest) => (<option key={interest.id} value={interest.id}>{interest.name}</option>) )}
                             </select>
                         </div>
@@ -157,7 +159,7 @@ export class ProfilePage extends React.Component {
                                 defaultValue={this.state.interest2}
                                 onChange={this.onInterestChange}
                             >
-                                <option key="0" value=""></option>          //blank option
+                                <option></option>          //blank option
                                 {this.props.interests.map( (interest) => (<option key={interest.id} value={interest.id}>{interest.name}</option>) )}
                             </select>
                         </div>
@@ -168,7 +170,7 @@ export class ProfilePage extends React.Component {
                                 defaultValue={this.state.interest3}
                                 onChange={this.onInterestChange}
                             >
-                                <option key="0" value=""></option>          //blank option
+                                <option></option>          //blank option
                                 {this.props.interests.map( (interest) => (<option key={interest.id} value={interest.id}>{interest.name}</option>) )}
                             </select>
                         </div>
@@ -181,7 +183,7 @@ export class ProfilePage extends React.Component {
                                 onChange={this.onOtherInterestsChange}
                                 multiple
                             >
-                                <option key="0" value=""></option>          //blank option
+                                <option></option>          //blank option
                                 {
                                     filterInterests(this.props.interests, [this.state.interest1, this.state.interest2, this.state.interest3])
                                         .map( (interest) => (<option key={interest.id} value={interest.id}>{interest.name}</option>) )
@@ -281,8 +283,8 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-    startUpdateUser: (user) => dispatch(startUpdateUser(user)),
-    startUpdateUserArea: (recordId, placeDetails) => dispatch(startUpdateUserArea(recordId, placeDetails))
+    startUpdateUser: (user, placeDetails) => dispatch(startUpdateUser(user, placeDetails)),
+    startUpdateGroups: (user) => dispatch(startUpdateGroups(user))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProfilePage);
