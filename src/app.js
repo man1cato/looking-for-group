@@ -7,8 +7,7 @@ import configureStore from './store/configureStore';
 import {firebase} from './firebase/firebase';
 import {login, logout} from './actions/auth';
 import {startSetUser} from './actions/user';
-import {startGetArea} from './actions/area';
-import {startGetGroups} from './actions/groups';
+import {startGetEvents} from './actions/events';
 import {startGetInterests} from './actions/interests';
 import {startGetAvailabilities} from './actions/availabilities';
 import LoadingPage from './components/LoadingPage';
@@ -42,14 +41,13 @@ ReactDOM.render(<LoadingPage />, document.getElementById('app'));
 
 firebase.auth().onAuthStateChanged((user) => {
     if (user) {
-        console.log('logged in user:', user);
+        console.log('logged in');
         store.dispatch(login(user.uid));
         store.dispatch(startSetUser(user)).then((userData) => {
             console.log('userData from app.js:', userData);
             store.dispatch(startGetAvailabilities());
-            return store.dispatch(startGetInterests());
-            // store.dispatch(startGetArea(userData.area));
-            // store.dispatch(startGetGroups(userData.groups));
+            store.dispatch(startGetInterests());
+            store.dispatch(startGetEvents(userData.groups, userData.availability));
         }).then(() => {
             renderApp();
             if (history.location.pathname === '/') {

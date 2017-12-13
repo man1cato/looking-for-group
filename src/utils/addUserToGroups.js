@@ -4,7 +4,6 @@ const apiKey = 'keyzG8AODPdzdkhjG';
 const baseUrl = 'https://api.airtable.com/v0/appOY7Pr6zpzhQs6l';
 
 export default async (userRecordId, userInterests, areaRecordId) => {
-    console.log('triggered addUserToGroups');
     let usersGroups = [];
     for (let interestRecordId of userInterests) {                                                                //FOR EACH INTEREST...
         const groupsFilter = `AND({Interest Record ID}="${interestRecordId}",{Area Record ID}="${areaRecordId}")`;
@@ -18,13 +17,11 @@ export default async (userRecordId, userInterests, areaRecordId) => {
                     "Area": [areaRecordId]
                 }
             });
-            console.log('POST response:', postResponse);
             usersGroups.push(postResponse.data.id);                                                  //...AND PUSH GROUP INTO GROUP ARRAY 
         } else {                                                            //ELSE IF GROUP FOUND...
             usersGroups.push(group.id);                                     //...PUSH GROUP INTO GROUP ARRAY 
         }
     }
-    console.log('usersGroups from addUserToGroups:',usersGroups);
     axios.patch(`${baseUrl}/Users/${userRecordId}?api_key=${apiKey}`,{      //FINALLY, UPDATE USER'S GROUPS
         "fields": {
             "Groups": usersGroups

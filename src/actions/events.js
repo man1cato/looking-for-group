@@ -1,4 +1,5 @@
 import axios from 'axios';
+import moment from 'moment';
 import _ from 'lodash';
 
 const apiKey= 'keyzG8AODPdzdkhjG';
@@ -10,33 +11,35 @@ export const getEvents = (events) => ({
     events
 });
 
-export const startGetEvents = (usersGroups, userAvailability, availabilities) => {
+export const startGetEvents = (usersGroups, userAvailabilities) => {
     return async (dispatch) => {
         try {
             let events = [];
             for (let group of usersGroups) {                                    //FOR EACH OF THE USER'S GROUPS...
                 const groupRecordId = group.id; 
-                for (let availability of userAvailability) {                    
-                    const availabilityRecordId = availability.id;
-                    const filter = `AND({Availability Record ID}="${availabilityRecordId}",{Group Record ID}="${groupRecordId}")`;
-                    const eventResponse = await axios.get(`${baseUrl}/Events?filterByFormula=${filter}&api_key=${apiKey}`);    
+                for (let availabilityRecordId of userAvailabilities) {                    
+                    const filter = `AND({Group Record ID}="${groupRecordId}",{Availability Record ID}="${availabilityRecordId}")`;
+                    const eventResponse = await axios.get(`${baseUrl}/Events?filterByFormula=${filter}&api_key=${apiKey}`); 
                     const event = eventResponse.data.records[0];
-                    
-                    //fetch event availability
-                    
-                    events.push({
-                        id: event.id, 
-                        interest: group.interest,
-                        area: group.area,
-                        availability: 
-                    });
+                    if (event) {
+                        events.push({
+                            id: event.id, 
+                            interest: group.interest,
+                            area: group.area,
+                            availability: event.fields.Availability[0],
+                            occurrence: event.fields.Occurrence,
+                            startDatetime: event.fields['Start Date & Time'],
+                            date: moment(event.fields['Start Date & Time']).format('MMM Do'),
+                            startTime: moment(event.fields['Start Date & Time']).format('h:mm a')
+                        });
+                    }
                 }
-                
-                
             }
-            dispatch(getEvents((events)));
+            console.log('events:', events);
+            const sortedEvents = _.orderBy(events, ['startDatetime'], ['asc']);
+            dispatch(getEvents((sortedEvents)));
         } catch (e) {
-            throw new Error('Failed to retrieve groups in startGetGroups');
+            throw new Error('Failed to retrieve groups in startGetEvents');
         }
     };
 };

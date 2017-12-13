@@ -1,14 +1,14 @@
 import React from 'react';
 import {connect} from 'react-redux';
+import EventList from './EventList';
 
 export const GroupPage = (props) => (
-    <div className="content-container">                            
-        <div>
-            <h2>{props.group.interest} in {props.group.area}</h2>
+    <div className="content-container">
+        <div className="page-header">
+            <h2 className="page-header__title">{props.group.interest} Events in {props.group.area}</h2>
         </div>
-        <div>
-            List of matching availability groups with user count and link to chat group goes here.
-        </div>
+        <h3>Available Times</h3>
+        <EventList interest={props.group.interest} area={props.group.area} />
     </div>
 );
 

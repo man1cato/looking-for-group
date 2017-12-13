@@ -4,28 +4,23 @@ import EventListItem from './EventListItem';
 
 
 export const EventList = (props) => (
-    <div>
-        <div className="page-header">
-            <div className="content-container">
-                <h2 className="page-header__title">${interest} Events in {area}</h2>
-            </div>
-        </div>
-        <div className="content-container">
-            <div className="list-body">
-                {
-                    props.events.length === 0 ? (
-                        <div className="list-item list-item--message">Please update your availability to be matched with events in your area.</div>
-                    ) : (
-                        props.events.map((event) => <EventListItem key={event.id} {...event} /> )    
-                    )
-                }
-            </div>
+    <div className="content-container">
+        <div className="list-body">
+            {
+                props.events.length === 0 ? (
+                    <div className="list-item list-item--message">Please update your availability to be matched with events in your area. Otherwise, give this a few seconds to load.</div>
+                ) : (
+                    props.events.map((event) => {
+                        if (props.interest === event.interest) {
+                            return (<EventListItem key={event.id} {...event} /> );
+                        }
+                    })
+                )
+            }
         </div>
     </div>
 );
 
-
-// const mapStateToProps = (state) =>  state.areas;
 
 const mapStateToProps = (state) => ({ events: state.events });
 

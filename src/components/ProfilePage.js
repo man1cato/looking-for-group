@@ -2,11 +2,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 import moment from 'moment';
 import _ from 'lodash';
-import {startUpdateUser, startUpdateGroups} from '../actions/user';
-// import {startUpdateGroups} from '../actions/groups';
-import updateAirtable from '../utils/updateAirtable';
-
-// import InterestSelector from './InterestSelector';
+import {startUpdateUser} from '../actions/user';
 import filterInterests from '../utils/filterInterests';
 import filterAvailabilities from '../utils/filterAvailabilities';
 import geolocateUser from '../utils/geolocateUser';
@@ -77,17 +73,14 @@ export class ProfilePage extends React.Component {
             const scriptNode = document.createElement('script');
             scriptNode.innerHTML = `getPlaceDetails('${this.state.recordId}','${this.state.postalCode}')`;  //MAKE CALL TO GOOGLE PLACES THEN CREATE <DIV> WITH RESPONSE INSIDE
             document.getElementById('scriptBlock').appendChild(scriptNode);
-            
+            setTimeout(() => {const placeDetails = JSON.parse(document.getElementById('placeDetails').textContent);},2000)
             setTimeout(() => {
-                const placeDetails = JSON.parse(document.getElementById('placeDetails').textContent);
                 console.log('placeDetails:',placeDetails)
                 this.props.startUpdateUser(this.state, placeDetails);                                 //UPDATE USER'S PROFILE
-                // updateAirtable(this.state, placeDetails);                      //UPDATE AIRTABLE
-                // this.props.startUpdateGroups(this.state);
                 document.body.removeChild(scriptBlock);                         //DELETE <DIV> BLOCK TO CLEAR DATA
-            }, 2000);
+            }, 3000);
         } else {
-            setTimeout(() => {this.props.startUpdateUser(this.state)}, 2000);                                 //UPDATE USER'S PROFILE
+            this.props.startUpdateUser(this.state);                                 //UPDATE USER'S PROFILE
         }
         
         const snackbar = document.getElementById("snackbar");
@@ -283,8 +276,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-    startUpdateUser: (user, placeDetails) => dispatch(startUpdateUser(user, placeDetails)),
-    startUpdateGroups: (user) => dispatch(startUpdateGroups(user))
+    startUpdateUser: (user, placeDetails) => dispatch(startUpdateUser(user, placeDetails))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProfilePage);
