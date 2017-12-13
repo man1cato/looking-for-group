@@ -1,13 +1,15 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
 
-const EventListItem = ({id, occurrence, startTime, date}) => (
-    <Link className="list-item" to={`/event/${id}`}>                             
-        <div className="list-item--text">
+const EventListItem = ({chatGroup, occurrence, startTime, date}) => (
+    // <Link className="list-item" >        
+    <div className="list-item">
+        <div className="list-item__content">
             <h3 className="list-item__title">{occurrence}</h3>
             <span>{date}, {startTime}</span>
         </div>
-    </Link>
+    </div>
+    // </Link>
 );
 
 

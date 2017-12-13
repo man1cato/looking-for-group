@@ -3,10 +3,11 @@
 }
 
 .header__content {
-    align-items: center;
     display: flex;
+    align-items: center;
     justify-content: space-between;
     padding: $s-size 0;
+    height: 100%;
 }
 
 .header__title {
@@ -17,5 +18,17 @@
         @media(max-width: $desktop-breakpoint) {
             font-size: $font-size-large;
         }
+    }
+}
+
+.header__links {
+    @extend .header__content;
+    padding: 0;
+    a {
+        display: flex;
+        align-items: center;
+    }
+    > * {
+        padding: 0 $s-size;
     }
 }

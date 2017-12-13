@@ -1,6 +1,7 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import GroupListItem from './GroupListItem';
+import {Link} from 'react-router-dom';
 
 
 export const GroupList = (props) => (
@@ -8,14 +9,14 @@ export const GroupList = (props) => (
         <div className="page-header">
             <div className="content-container">
                 <h2 className="page-header__title">My Groups</h2>
-                <span>{props.groups[0].area}</span>
+                <span>{props.area.name}</span>
             </div>
         </div>
         <div className="content-container">
             <div className="list-body">
                 {
                     props.groups.length === 0 ? (
-                        <div className="list-item list-item--message">Please update your profile to see available groups in your area.</div>
+                        <div className="list-item list-item--message">Please update your <Link to='/profile'>profile</Link> to see available groups in your area.</div>
                     ) : (
                         props.groups.map((group) => <GroupListItem key={group.id} {...group} /> )    
                     )
@@ -28,6 +29,9 @@ export const GroupList = (props) => (
 
 // const mapStateToProps = (state) =>  state.areas;
 
-const mapStateToProps = (state) => ({ groups: state.user.groups });
+const mapStateToProps = (state) => ({ 
+    groups: state.user.groups, 
+    area: state.user.area
+});
 
 export default connect(mapStateToProps)(GroupList);

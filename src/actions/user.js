@@ -123,7 +123,9 @@ export const startUpdateUser = (user, placeDetails) => {
                     id: group.id, 
                     area: group.fields["Area Text"],
                     interest: group.fields["Interest Name"],
-                    availability: group.fields["Group Availability"]
+                    availability: group.fields["Group Availability"],
+                    userCount: group.fields["Count Users"],
+                    icons: group.fields.Icon[0].thumbnails
                 });
             }
             const sortedGroups = _.orderBy(groups, ['interest'], ['asc']);

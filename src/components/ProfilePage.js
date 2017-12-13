@@ -56,15 +56,14 @@ export class ProfilePage extends React.Component {
         const changedAvailability = e.target.id;
         if (checked) {
             this.setState(() => ({ availability: [changedAvailability, ...this.state.availability] }));
-            console.log('checked after:',this.state.availability);
         } else {
             this.setState(() => ({ availability: this.state.availability.filter((availability) => availability !== changedAvailability) }));
-            console.log('unchecked after:',this.state.availability);
         }
     }
     onSubmit = (e) => {
         e.preventDefault();
-        if (this.state.postalCode !== this.props.user.postalCode || this.state.allInterests !== this.props.user.allInterests) {
+        
+        if (this.state.postalCode !== this.props.user.postalCode) {
             
             const scriptBlock = document.createElement('div');          //CREATE <DIV> TO HOLD TEMPORARY DATA
             scriptBlock.id = 'scriptBlock';

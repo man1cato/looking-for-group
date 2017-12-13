@@ -18,25 +18,25 @@ const updateAirtable = async (user, placeDetails) => {
     const allInterests = user.allInterests;
     const userAvailabilities = user.availability;
     const timezoneId = user.area.timezoneId;
-    // try {
-        const areaRecordId = await geolocateUser(recordId, placeDetails);                 //1. GEOLOCATE AND ASSIGN AREA
-        const usersGroups = await addUserToGroups(recordId, allInterests, areaRecordId);   //2. ADD TO GROUPS BASED ON INTERESTS AND AREA
+    let areaRecordId = user.area.id;
+    
+    if (placeDetails) {
+        areaRecordId = await geolocateUser(recordId, placeDetails);                 //1. GEOLOCATE AND ASSIGN AREA
+    } 
+    const usersGroups = await addUserToGroups(recordId, allInterests, areaRecordId);   //2. ADD TO GROUPS BASED ON INTERESTS AND AREA
         
-        for (let groupRecordId of usersGroups) {                                        //3. FOR EACH GROUP...
-            const groupResponse = await axios.get(`${baseUrl}/Groups/${groupRecordId}?api_key=${apiKey}`);
-            const group = groupResponse.data;
-            const groupAvailabilities = await updateGroupAvailabilities(group, userAvailabilities);     //...UPDATE GROUP AVAILABILITY...
-            group.fields['Group Availability'] = groupAvailabilities;
-            // console.log('Updated group:', group);
-            manageEvents(group, userAvailabilities, timezoneId);                //...AND UPDATE/CREATE EVENTS
-        }
-        
-        // await addVenues();                                                      //4. ADD VENUES TO NEW GROUPS
-        // await setEventTime();                                                   //5. UPDATE/CREATE EVENTS BASED ON UPDATED/CREATED GROUPS
-        // createGroupMe();                                                        //6. UPDATE/CREATE CHAT GROUPS BASED ON UPDATED/CREATED EVENTS
-    // } catch (e) {
-        // throw new Error('Update scripts failed in updateAirtable');
-    // }
+    for (let groupRecordId of usersGroups) {                                        //3. FOR EACH GROUP...
+        const groupResponse = await axios.get(`${baseUrl}/Groups/${groupRecordId}?api_key=${apiKey}`);
+        const group = groupResponse.data;
+        const groupAvailabilities = await updateGroupAvailabilities(group, userAvailabilities);     //...UPDATE GROUP AVAILABILITY...
+        group.fields['Group Availability'] = groupAvailabilities;
+        // console.log('Updated group:', group);
+        manageEvents(group, userAvailabilities, timezoneId);                //...AND UPDATE/CREATE EVENTS
+    }
+    
+    // await addVenues();                                                      //4. ADD VENUES TO NEW GROUPS
+    // await setEventTime();                                                   //5. UPDATE/CREATE EVENTS BASED ON UPDATED/CREATED GROUPS
+    // createGroupMe();                                                        //6. UPDATE/CREATE CHAT GROUPS BASED ON UPDATED/CREATED EVENTS
 };
 
 export default updateAirtable;

@@ -14,6 +14,9 @@
     span {
         font-weight: 700;
     }
+    @media (max-width: $desktop-breakpoint) {
+        font-size: $font-size-large;
+    }
 }
 
 .page-header--flex {

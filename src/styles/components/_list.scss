@@ -38,17 +38,6 @@
     }
 }
 
-.list-item--text {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    @media (min-width: $desktop-breakpoint) {
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;                   
-    }
-}
-
 .list-item--message {
     align-items: center;
     justify-content: center;
@@ -56,6 +45,21 @@
     padding: $m-size;
     &:hover {
         background: none;
+    }
+}
+
+.list-item__content {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;                   
+}
+
+.list-item__right {
+    display: flex;
+    align-items: center;
+    > * {
+        padding-left: $xs-size;
     }
 }
 
