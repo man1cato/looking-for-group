@@ -16,3 +16,9 @@
     }
 }
 
+.page-header--flex {
+    display: flex;
+    > * {
+        padding-right: $s-size;
+    }
+}

@@ -41,12 +41,15 @@ export const startSetUser = ({uid, email}) => {
                 const usersGroups = userRecord.fields.Groups;                   //RETRIEVE GROUPS DATA
                 let groups = [];
                 for (let groupRecordId of usersGroups) {
-                    const group = await axios.get(`${baseUrl}/Groups/${groupRecordId}?api_key=${apiKey}`);
+                    const groupResponse = await axios.get(`${baseUrl}/Groups/${groupRecordId}?api_key=${apiKey}`);
+                    const group = groupResponse.data;
                     groups.push({
-                        id: group.data.id, 
-                        area: group.data.fields["Area Text"],
-                        interest: group.data.fields["Interest Name"],
-                        availability: group.data.fields["Group Availability"]
+                        id: group.id, 
+                        area: group.fields["Area Text"],
+                        interest: group.fields["Interest Name"],
+                        availability: group.fields["Group Availability"],
+                        userCount: group.fields["Count Users"],
+                        icons: group.fields.Icon[0].thumbnails
                     });
                 }
                 const sortedGroups = _.orderBy(groups, ['interest'], ['asc']);

@@ -4,8 +4,7 @@ import EventListItem from './EventListItem';
 
 
 export const EventList = (props) => (
-    <div className="content-container">
-        <div className="list-body">
+    <div>
             {
                 props.events.length === 0 ? (
                     <div className="list-item list-item--message">Please update your availability to be matched with events in your area. Otherwise, give this a few seconds to load.</div>
@@ -17,7 +16,6 @@ export const EventList = (props) => (
                     })
                 )
             }
-        </div>
     </div>
 );
 

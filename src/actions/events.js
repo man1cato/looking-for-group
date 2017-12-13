@@ -30,7 +30,8 @@ export const startGetEvents = (usersGroups, userAvailabilities) => {
                             occurrence: event.fields.Occurrence,
                             startDatetime: event.fields['Start Date & Time'],
                             date: moment(event.fields['Start Date & Time']).format('MMM Do'),
-                            startTime: moment(event.fields['Start Date & Time']).format('h:mm a')
+                            startTime: moment(event.fields['Start Date & Time']).format('h:mm a'),
+                            chatGroup: event.fields['Chat Group']
                         });
                     }
                 }
