@@ -7,7 +7,7 @@ export const EventList = (props) => (
     <div>
             {
                 props.events.length === 0 ? (
-                    <div className="list-item list-item--message">Please update your availability to be matched with events in your area. Otherwise, give this a few seconds to load.</div>
+                    <div className="list-item list-item--message">This may take some time to load. If it has been more than a minute, then there are no available event times for this group. </div>
                 ) : (
                     props.events.map((event) => {
                         if (props.interest === event.interest) {

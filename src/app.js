@@ -47,13 +47,15 @@ firebase.auth().onAuthStateChanged((user) => {
             console.log('userData from app.js:', userData);
             store.dispatch(startGetAvailabilities());
             store.dispatch(startGetInterests());
-            store.dispatch(startGetEvents(userData.groups, userData.availability));
-        }).then(() => {
+            return userData;
+        }).then((userData) => {
             renderApp();
             if (history.location.pathname === '/') {
                 history.push('/dashboard');
             }
-            console.log('from app.js:', store.getState());
+            return store.dispatch(startGetEvents(userData.groups, userData.availability));
+        }).then(() => {
+            console.log('State after events from app.js:', store.getState());
         });
     } else {
         console.log('logged out');

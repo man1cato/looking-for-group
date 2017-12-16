@@ -8,7 +8,7 @@ export const GroupList = (props) => (
     <div>
         <div className="page-header">
             <div className="content-container">
-                <h2 className="page-header__title">My Groups</h2>
+                <h2 className="page-header__title">My Local Groups</h2>
                 <span>{props.area.name}</span>
             </div>
         </div>

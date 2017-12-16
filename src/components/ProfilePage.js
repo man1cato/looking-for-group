@@ -65,7 +65,7 @@ export class ProfilePage extends React.Component {
         
         if (this.state.postalCode !== this.props.user.postalCode) {
             
-            const scriptBlock = document.createElement('div');          //CREATE <DIV> TO HOLD TEMPORARY DATA
+            const scriptBlock = document.createElement('div');                  //CREATE <DIV> TO HOLD TEMPORARY DATA
             scriptBlock.id = 'scriptBlock';
             document.body.appendChild(scriptBlock);
             
@@ -82,9 +82,11 @@ export class ProfilePage extends React.Component {
             this.props.startUpdateUser(this.state);                                 //UPDATE USER'S PROFILE
         }
         
-        const snackbar = document.getElementById("snackbar");
-        snackbar.className = "snackbar--show";
-        setTimeout(() => { snackbar.className = snackbar.className.replace("snackbar--show", ""); }, 1000);
+        /*****SNACKBAR*****/
+        const x = document.getElementById("snackbar");                                      // Get the snackbar DIV
+        x.className = "show";                                                               // Add the "show" class to DIV
+        setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);     // After 3 seconds, remove the show class from DIV
+        /******************/
         
         setTimeout(() => {this.props.history.push('/')}, 4000);
     };
@@ -280,23 +282,3 @@ const mapDispatchToProps = (dispatch) => ({
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProfilePage);
 
-
-// e.preventDefault();
-//         if (this.state.postalCode !== this.props.user.postalCode) {
-//             const script = document.createElement('script');
-//             script.innerHTML = `getPlaceDetails('${this.state.recordId}','${this.state.postalCode}')`;
-//             document.body.appendChild(script);
-//             setTimeout(() => {
-//                 const placeDetails = JSON.parse(document.getElementById('placeDetails').textContent);
-//                 this.props.startUpdateUserArea(this.state, placeDetails);                      //UPDATE USER'S AREA
-//             },2000);
-            
-//             setTimeout(() => console.log('State after startUpdateUserArea:', this.state), 5000);
-//         }
-//         const snackbar = document.getElementById("snackbar");
-//         snackbar.className = "snackbar--show";
-//         setTimeout(() => { snackbar.className = snackbar.className.replace("snackbar--show", "") }, 2000);
-        
-//         setTimeout(() => this.props.startUpdateUser(this.state), 5000);                                 //UPDATE USER'S PROFILE
-//         // setTimeout(() => {this.props.history.push('/')}, 5000);
-//         setTimeout(() => console.log('Dispatched state:', this.state), 8000); 

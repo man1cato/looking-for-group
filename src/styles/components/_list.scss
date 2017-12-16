@@ -52,7 +52,31 @@
     width: 100%;
     display: flex;
     justify-content: space-between;
-    align-items: center;                   
+    align-items: center;    
+}
+
+.list-item__content--wrap {
+    @extend .list-item__content;
+    @media (max-width: $desktop-breakpoint) {
+        width: auto;
+        flex-wrap: wrap;
+        > * {
+                padding-right: $m-size;
+        }
+    }
+}
+
+.list-item__wrap {
+    display: flex;
+    justify-content: flex-start;
+    @media (max-width: $desktop-breakpoint) {
+        flex-direction: column;
+    }
+}
+
+.list-item__left {
+    width: 21rem;
+    padding-right: $s-size;
 }
 
 .list-item__right {
@@ -65,7 +89,6 @@
 
 .list-item__title {
     margin: 0;
-    word-break: break-all;
     font-weight: 500;
 }
 

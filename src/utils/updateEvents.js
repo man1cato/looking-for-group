@@ -21,6 +21,7 @@ export default async (group, area) => {
     const groupRecordId = group.id;
     const groupAvailabilityRecordIds = group.availability;  //array of availability record IDs
     const timezoneId = area.timezoneId;
+    const events = group.events;
     
     for (let availabilityRecordId of groupAvailabilityRecordIds) {
         const response = await axios.get(`${baseUrl}/Availability/${availabilityRecordId}?api_key=${apiKey}`);
