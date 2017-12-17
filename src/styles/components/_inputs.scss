@@ -1,9 +1,30 @@
+.input {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    h4 {
+        margin: 0 $s-size $s-size 0;
+        margin-right: $s-size;
+        white-space: nowrap; 
+    }
+    @media(max-width: $desktop-breakpoint) {
+        flex-wrap: wrap;
+        > * {
+            width: 100%;
+        }
+    }
+}
+
+
+
 .text-input {
     border: 1px solid #cacccd;
     height: 45px;
     font-size: $font-size-medium;
     font-weight: 300;
     padding: $s-size;
+    margin: 0 $s-size $s-size 0;
+    width: 100%;
 }
 
 .select {
@@ -18,16 +39,39 @@
 .multiple-select {
     @extend .select;
     height: 150px;
+    @media(max-width: $desktop-breakpoint) {
+        height: 45px;
+    }
 }
 
 .table {
-    border-spacing: $s-size;
     text-align: center;
+    margin-bottom: $m-size;
     th {
-        text-align: left;
+        height: 12rem;
+        font-weight: 300;
+        font-size: $font-size-medium;
+        min-width: 9rem;
+        div {
+            transform: rotate(-45deg);
+        }
+        @media(max-width: $desktop-breakpoint) {
+            height: 10rem;
+            min-width: 0.5rem;
+            font-size: $font-size-small;
+            div {
+                transform: rotate(-90deg);
+            }
+        }
+    }
+    tr {
+        height: 4rem;
     }
 }
 
 .table__first-column {
-    text-align: left
+    text-align: left;
+    width: 1%;
+    padding-left: 0;
 }
+

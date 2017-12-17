@@ -7,6 +7,7 @@ import filterInterests from '../utils/filterInterests';
 import filterAvailabilities from '../utils/filterAvailabilities';
 import geolocateUser from '../utils/geolocateUser';
 
+const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
 export class ProfilePage extends React.Component {
     constructor(props) {
@@ -84,8 +85,8 @@ export class ProfilePage extends React.Component {
         
         /*****SNACKBAR*****/
         const x = document.getElementById("snackbar");                                      // Get the snackbar DIV
-        x.className = "show";                                                               // Add the "show" class to DIV
-        setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);     // After 3 seconds, remove the show class from DIV
+        x.className = "snackbar-show";                                                               // Add the "show" class to DIV
+        setTimeout(function(){ x.className = x.className.replace("snackbar-show", ""); }, 3000);     // After 3 seconds, remove the show class from DIV
         /******************/
         
         setTimeout(() => {this.props.history.push('/')}, 4000);
@@ -99,11 +100,13 @@ export class ProfilePage extends React.Component {
                 </div> 
                 <div>
                     <form className="form" onSubmit={this.onSubmit}>
-                        <div>
-                            Name: <input
+                        <div className="input">
+                            <h4>Name:</h4> 
+                            <input
                                 className="text-input"
                                 type="text"
                                 id="firstName"
+                                placeholder="First"
                                 value={this.state.firstName}
                                 onChange={this.onTextChange}
                             />
@@ -111,12 +114,14 @@ export class ProfilePage extends React.Component {
                                 className="text-input"
                                 type="text"
                                 id="lastName"
+                                placeholder="Last"
                                 value={this.state.lastName}
                                 onChange={this.onTextChange}
                             />
                         </div>
-                        <div>
-                            Birth Year: <input 
+                        <div className="input">
+                            <h4>Birth Year:</h4> 
+                            <input 
                                 className="text-input"
                                 type="number" 
                                 id="birthYear" 
@@ -126,8 +131,9 @@ export class ProfilePage extends React.Component {
                                 onChange={this.onTextChange}
                             />
                         </div>
-                        <div>
-                            Postal Code: <input 
+                        <div className="input">
+                            <h4>Postal Code:</h4> 
+                            <input 
                                 className="text-input"
                                 type="text" 
                                 id="postalCode"
@@ -135,8 +141,9 @@ export class ProfilePage extends React.Component {
                                 onChange={this.onTextChange}
                             />
                         </div>
-                        <div>
-                            #1 Interest: <select 
+                        <div className="input">
+                            <h4>#1 Interest:</h4> 
+                            <select 
                                 className="select" 
                                 id="interest1" 
                                 defaultValue={this.state.interest1}
@@ -146,8 +153,9 @@ export class ProfilePage extends React.Component {
                                 {this.props.interests.map( (interest) => (<option key={interest.id} value={interest.id}>{interest.name}</option>) )}
                             </select>
                         </div>
-                        <div>
-                            #2 Interest: <select 
+                        <div className="input">
+                            <h4>#2 Interest:</h4> 
+                            <select 
                                 className="select" 
                                 id="interest2" 
                                 defaultValue={this.state.interest2}
@@ -157,8 +165,9 @@ export class ProfilePage extends React.Component {
                                 {this.props.interests.map( (interest) => (<option key={interest.id} value={interest.id}>{interest.name}</option>) )}
                             </select>
                         </div>
-                        <div>
-                            #3 Interest: <select 
+                        <div className="input">
+                            <h4>#3 Interest:</h4> 
+                            <select 
                                 className="select" 
                                 id="interest3" 
                                 defaultValue={this.state.interest3}
@@ -168,8 +177,9 @@ export class ProfilePage extends React.Component {
                                 {this.props.interests.map( (interest) => (<option key={interest.id} value={interest.id}>{interest.name}</option>) )}
                             </select>
                         </div>
-                        <div>
-                            Other Interests: <select 
+                        <div className="input">
+                            <h4>Other Interests:</h4> 
+                            <select 
                                 className="multiple-select" 
                                 id="additionalInterests" 
                                 size="6"
@@ -184,77 +194,33 @@ export class ProfilePage extends React.Component {
                                 }
                             </select>
                         </div>
-                        <div>
-                            <table className="table">
-                                <thead>
-                                    <tr>
-                                        <th>Availability:</th>
-                                        <td>Mon</td>
-                                        <td>Tue</td>
-                                        <td>Wed</td>
-                                        <td>Thu</td>
-                                        <td>Fri</td>
-                                        <td>Sat</td>
-                                        <td>Sun</td>
-                                    </tr>
-                                </thead>
+                        <h4>Availability:</h4>
+                        <div className="input">
+                            <table className="table" cellSpacing="0" cellPadding="0">
                                 <tbody>
                                     <tr>
-                                        <td className="table__first-column">Morning (8am-12pm)</td>
-                                        {filterAvailabilities(this.props.availabilities, 'Morning').map((availability) => (
-                                            <td key={availability.recordId}>
-                                                <input 
-                                                    type="checkbox" 
-                                                    key={availability.recordId} 
-                                                    id={availability.recordId} 
-                                                    defaultChecked={this.state.availability.indexOf(availability.recordId) > -1 && true}
-                                                    onChange={this.onAvailabilityChange}
-                                                />
-                                            </td> 
-                                        ))}
+                                        <th className="table__first-column"></th>
+                                        <th><div><span>Morning <nobr>(8am-12pm)</nobr></span></div></th>
+                                        <th><div><span>Afternoon <nobr>(12pm-5pm)</nobr></span></div></th>
+                                        <th><div><span>Evening <nobr>(5pm-10pm)</nobr></span></div></th>
+                                        <th><div><span><nobr>Late Night</nobr> <nobr>(10pm-2am)</nobr></span></div></th>
                                     </tr>
-                                    <tr>
-                                        <td className="table__first-column">Afternoon (12pm-5pm)</td>
-                                        {filterAvailabilities(this.props.availabilities, 'Afternoon').map((availability) => (
-                                            <td key={availability.recordId}>
-                                                <input 
-                                                    type="checkbox" 
-                                                    key={availability.recordId}
-                                                    id={availability.recordId} 
-                                                    defaultChecked={this.state.availability.indexOf(availability.recordId) > -1 && true}
-                                                    onChange={this.onAvailabilityChange}
-                                                />
-                                            </td> 
-                                        ))}
-                                    </tr>
-                                    <tr>
-                                        <td className="table__first-column">Evening (5pm-10pm)</td>
-                                        {filterAvailabilities(this.props.availabilities, 'Evening').map((availability) => (
-                                            <td key={availability.recordId}>
-                                                <input 
-                                                    type="checkbox" 
-                                                    key={availability.recordId} 
-                                                    id={availability.recordId} 
-                                                    defaultChecked={this.state.availability.indexOf(availability.recordId) > -1 && true}
-                                                    onChange={this.onAvailabilityChange}
-                                                />
-                                            </td> 
-                                        ))}
-                                    </tr>
-                                    <tr>
-                                        <td className="table__first-column">Late Night (10pm-2am)</td>
-                                        {filterAvailabilities(this.props.availabilities, 'Late Night').map((availability) => (
-                                            <td key={availability.recordId}>
-                                                <input 
-                                                    type="checkbox" 
-                                                    key={availability.recordId} 
-                                                    id={availability.recordId} 
-                                                    defaultChecked={this.state.availability.indexOf(availability.recordId) > -1 && true}
-                                                    onChange={this.onAvailabilityChange}
-                                                />
-                                            </td> 
-                                        ))}
-                                    </tr>
+                                    {weekdays.map((weekday) => (
+                                        <tr key={weekday}>
+                                            <td className="table__first-column" key={weekday}>{weekday.substr(0,3)}</td>
+                                            {filterAvailabilities(this.props.availabilities, weekday).map((availability) => (
+                                                <td key={availability.recordId}>
+                                                    <input 
+                                                        type="checkbox" 
+                                                        key={availability.recordId} 
+                                                        id={availability.recordId} 
+                                                        defaultChecked={this.state.availability.indexOf(availability.recordId) > -1 && true}
+                                                        onChange={this.onAvailabilityChange}
+                                                    />
+                                                </td> 
+                                            ))}
+                                        </tr>
+                                    ))}
                                 </tbody>
                             </table>
                         </div>
@@ -281,4 +247,3 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProfilePage);
-
