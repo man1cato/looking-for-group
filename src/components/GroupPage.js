@@ -8,7 +8,7 @@ export const GroupPage = (props) => (
             <div className="content-container page-header--flex">
                 <img src={props.group.icons.large.url} height="62" width="auto" />
                 <div>
-                    <h2 className="page-header__title">{props.group.interest} Events</h2>
+                    <h2 className="page-header__title">{props.group.interest} Event Groups</h2>
                     <span>{props.group.area}</span>
                 </div>
             </div>
@@ -16,7 +16,10 @@ export const GroupPage = (props) => (
         <div className="content-container">
             <div className="list-header">
                 <div className="list-header__title">Available Times</div>
-                <div className="list-header__subtitle">Select a time to be taken to the corresponding chat group.</div>
+                <div className="list-header__subtitle">
+                    <div>Viewing {props.events.length} of {props.group.eventCount} event groups. Filtering is based on your availability.</div>
+                    <div>Select a time to be taken to the corresponding chat group.</div>
+                </div>
             </div>
             <div className="list-body">
                 <EventList interest={props.group.interest} area={props.group.area} />
@@ -27,7 +30,8 @@ export const GroupPage = (props) => (
 
 
 const mapStateToProps = (state, props) => ({
-    group: state.user.groups.find((group) => group.id === props.match.params.id)     //RETURNS GROUP OBJECT WHERE ID MATCHES URL ID PARAM
+    group: state.user.groups.find((group) => group.id === props.match.params.id),     //RETURNS GROUP OBJECT WHERE ID MATCHES URL ID PARAM
+    events: state.events.filter((event) => event.groupId === props.match.params.id) //RETURNS ARRAY OF EVENT OBJECTS WHERE GROUPID MATCHES URL ID PARAM
 });
 
 export default connect(mapStateToProps)(GroupPage);

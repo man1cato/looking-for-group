@@ -53,7 +53,9 @@ firebase.auth().onAuthStateChanged((user) => {
             if (history.location.pathname === '/') {
                 history.push('/dashboard');
             }
-            return store.dispatch(startGetEvents(userData.groups, userData.availability));
+            if (userData.groups && userData.availability) {
+                return store.dispatch(startGetEvents(userData.groups, userData.availability));
+            }
         }).then(() => {
             console.log('State after events from app.js:', store.getState());
         });

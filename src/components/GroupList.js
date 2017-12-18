@@ -15,12 +15,18 @@ export const GroupList = (props) => (
         <div className="content-container">
             <div className="list-body">
                 {
-                    props.groups.length === 0 ? (
+                    props.groups ? (
+                        props.groups.length > 0 ? (
+                            props.groups.map((group) => <GroupListItem key={group.id} {...group} /> )
+                        ) : (
+                            <div className="list-item list-item--message">
+                                <div>Please update your <span><Link to='/profile'>profile</Link></span> to see available groups in your area. If you've already done so, please give this a moment to load.</div>
+                            </div>
+                        )
+                    ) : (
                         <div className="list-item list-item--message">
                             <div>Please update your <span><Link to='/profile'>profile</Link></span> to see available groups in your area.</div>
                         </div>
-                    ) : (
-                        props.groups.map((group) => <GroupListItem key={group.id} {...group} /> )    
                     )
                 }
             </div>
@@ -28,8 +34,6 @@ export const GroupList = (props) => (
     </div>
 );
 
-
-// const mapStateToProps = (state) =>  state.areas;
 
 const mapStateToProps = (state) => ({ 
     groups: state.user.groups, 

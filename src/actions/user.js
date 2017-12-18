@@ -1,7 +1,12 @@
 import axios from 'axios';
 import _ from 'lodash';
-import updateAirtable from '../utils/updateAirtable';
+// import updateAirtable from '../utils/updateAirtable';
 import createGroupObject from '../utils/createGroupObject';
+import geolocateUser from '../utils/geolocateUser';
+import updateUsersGroups from '../utils/updateUsersGroups';
+import updateGroupAvailabilities from '../utils/updateGroupAvailabilities';
+import manageEvents from '../utils/manageEvents';
+import {startGetEvents} from './events';
 
 const baseUrl = 'https://api.airtable.com/v0/appOY7Pr6zpzhQs6l';
 const apiKey= 'keyzG8AODPdzdkhjG';
@@ -29,7 +34,7 @@ export const startSetUser = ({uid, email}) => {
             const additionalInterests = userRecord.fields["Add'l Interests"] || [];
             const allInterests = _.compact([interest1, interest2, interest3, ...additionalInterests]);
             const userAvailabilityIds = userRecord.fields.Availability;
-            let area = {};
+            let area = {};  
             let sortedGroups = [];
             
             if (userRecord.fields.Area) {                         //RETRIEVE AREA DATA
@@ -107,24 +112,38 @@ export const startUpdateUser = (user, placeDetails) => {
     return async (dispatch) => {
         if (user.recordId) {
             axios.patch(`${baseUrl}/Users/${user.recordId}?api_key=${apiKey}`, {"fields": fields});         //UPDATE PROFILE FIELDS
-            await updateAirtable(user,placeDetails);
+            // await updateAirtable(user,placeDetails);
             
-            //UPDATE USER'S GROUPS IN STORE
-            const areaRecordId = user.area.id;
+            /***UPDATE AIRTABLE***/
+            const userId = user.recordId;
             const userInterests = user.allInterests;
-            let groups = [];
-            for (let interestRecordId of userInterests) {
-                const filter = `AND({Interest Record ID}="${interestRecordId}",{Area Record ID}="${areaRecordId}")`;
-                const response = await axios.get(`${baseUrl}/Groups?filterByFormula=${filter}&api_key=${apiKey}`);
-                const groupData = response.data.records[0];
-                groups.push(createGroupObject(groupData));
-            }
-            const sortedGroups = _.orderBy(groups, ['interest'], ['asc']);
-            user.groups = sortedGroups;
+            let areaId = !!user.area ? user.area.id : '';
+            if (placeDetails) {
+                areaId = await geolocateUser(userId, placeDetails);                 //1. GEOLOCATE AND ASSIGN AREA
+            } 
             
+            const usersGroupIds = await updateUsersGroups(userId, userInterests, areaId);   //2. ADD TO GROUPS BASED ON INTERESTS AND AREA
+            let usersGroups = [];
+            for (let groupId of usersGroupIds) {                                        //3. FOR EACH GROUP...
+                const groupResponse = await axios.get(`${baseUrl}/Groups/${groupId}?api_key=${apiKey}`);
+                let group = await createGroupObject(groupResponse.data);
+                const groupAvailabilities = await updateGroupAvailabilities(group);     //...UPDATE GROUP AVAILABILITY...
+                group.availability = groupAvailabilities;
+                const eventIds = await manageEvents(group);                                            //...AND UPDATE/CREATE EVENTS AND CHAT GROUPS
+                
+                group.events = eventIds;
+                console.log('Updated group:', group);
+                usersGroups.push(group);
+            }
+            
+            /***UPDATE USER'S GROUPS IN STORE***/
+            const sortedUsersGroups = _.orderBy(usersGroups, ['interest'], ['asc']);
+            user.groups = sortedUsersGroups;
+            dispatch(startGetEvents(sortedUsersGroups, user.availability));
         } else {
             axios.post(`${baseUrl}/Users?api_key=${apiKey}`, {"fields": {"Email": user.email, "Firebase ID": user.uid, ...fields}});
         }
+        console.log('DISPATCHED UPDATED USER:', user);
         dispatch(setUser(user));
     };
 };

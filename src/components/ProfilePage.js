@@ -73,12 +73,13 @@ export class ProfilePage extends React.Component {
             const scriptNode = document.createElement('script');
             scriptNode.innerHTML = `getPlaceDetails('${this.state.recordId}','${this.state.postalCode}')`;  //MAKE CALL TO GOOGLE PLACES THEN CREATE <DIV> WITH RESPONSE INSIDE
             document.getElementById('scriptBlock').appendChild(scriptNode);
-            setTimeout(() => {const placeDetails = JSON.parse(document.getElementById('placeDetails').textContent);},2000)
-            setTimeout(() => {
+            
+            setTimeout(async () => {
+                const placeDetails = await JSON.parse(document.getElementById('placeDetails').textContent);
                 console.log('placeDetails:',placeDetails)
                 this.props.startUpdateUser(this.state, placeDetails);                                 //UPDATE USER'S PROFILE
                 document.body.removeChild(scriptBlock);                         //DELETE <DIV> BLOCK TO CLEAR DATA
-            }, 3000);
+            }, 2000);
         } else {
             this.props.startUpdateUser(this.state);                                 //UPDATE USER'S PROFILE
         }

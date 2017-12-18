@@ -14,12 +14,12 @@ const updateAirtable = async (user, placeDetails) => {
     const userId = user.recordId;
     const allInterests = user.allInterests;
     
-    let areaRecordId = user.area.id;
+    let areaId = !!user.area ? user.area.id : '';
     
     if (placeDetails) {
-        areaRecordId = await geolocateUser(userId, placeDetails);                 //1. GEOLOCATE AND ASSIGN AREA
+        areaId = await geolocateUser(userId, placeDetails);                 //1. GEOLOCATE AND ASSIGN AREA
     } 
-    const usersGroups = await addUserToGroups(userId, allInterests, areaRecordId);   //2. ADD TO GROUPS BASED ON INTERESTS AND AREA
+    const usersGroups = await addUserToGroups(userId, allInterests, areaId);   //2. ADD TO GROUPS BASED ON INTERESTS AND AREA
         
     for (let groupId of usersGroups) {                                        //3. FOR EACH GROUP...
         const groupResponse = await axios.get(`${baseUrl}/Groups/${groupId}?api_key=${apiKey}`);
