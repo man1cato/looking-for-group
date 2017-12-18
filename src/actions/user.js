@@ -2,7 +2,6 @@ import axios from 'axios';
 import _ from 'lodash';
 import updateAirtable from '../utils/updateAirtable';
 import createGroupObject from '../utils/createGroupObject';
-import {fetchEvents} from '../utils/manageEvents';
 
 const baseUrl = 'https://api.airtable.com/v0/appOY7Pr6zpzhQs6l';
 const apiKey= 'keyzG8AODPdzdkhjG';
@@ -17,39 +16,44 @@ export const setUser = (user = {}) => ({
 
 //SET_USER
 export const startSetUser = ({uid, email}) => {
-    const filterFormula = `{Email}="${email}"`;
     return async (dispatch) => {
         //SEARCH AIRTABLE FOR USER'S EMAIL
+        const filterFormula = `{Email}="${email}"`;
         const response = await axios.get(`${baseUrl}/Users?filterByFormula=${filterFormula}&api_key=${apiKey}`);
         //IF EMAIL FOUND, GATHER PROFILE INFO
         if (response.data.records.length > 0) {
             const userRecord = response.data.records[0];
-            const interest1 = userRecord.fields['#1 Interest'] && userRecord.fields['#1 Interest'][0];
-            const interest2 = userRecord.fields['#2 Interest'] && userRecord.fields['#2 Interest'][0];
-            const interest3 = userRecord.fields['#3 Interest'] && userRecord.fields['#3 Interest'][0];
+            const interest1 = !!userRecord.fields['#1 Interest'] && userRecord.fields['#1 Interest'][0];
+            const interest2 = !!userRecord.fields['#2 Interest'] && userRecord.fields['#2 Interest'][0];
+            const interest3 = !!userRecord.fields['#3 Interest'] && userRecord.fields['#3 Interest'][0];
             const additionalInterests = userRecord.fields["Add'l Interests"] || [];
             const allInterests = _.compact([interest1, interest2, interest3, ...additionalInterests]);
             const userAvailabilityIds = userRecord.fields.Availability;
+            let area = {};
+            let sortedGroups = [];
             
-            const areaRecordId = userRecord.fields.Area;                    //RETRIEVE AREA DATA
-            const areaResponse = await axios.get(`https://api.airtable.com/v0/appOY7Pr6zpzhQs6l/Areas/${areaRecordId}?api_key=${apiKey}`);
-            const area = {
-                id: areaResponse.data.id, 
-                name: areaResponse.data.fields.Name,
-                timezoneId: areaResponse.data.fields["Timezone ID"]
-            };   
-
-            const groupIds = userRecord.fields.Groups;                   //RETRIEVE GROUPS DATA
-            let groups = [];
-            for (let groupId of groupIds) {
-                const groupResponse = await axios.get(`${baseUrl}/Groups/${groupId}?api_key=${apiKey}`);
-                const group = createGroupObject(groupResponse.data);
-                
-                groups.push(group);
+            if (userRecord.fields.Area) {                         //RETRIEVE AREA DATA
+                const areaRecordId = userRecord.fields.Area[0];
+                const areaResponse = await axios.get(`https://api.airtable.com/v0/appOY7Pr6zpzhQs6l/Areas/${areaRecordId}?api_key=${apiKey}`);
+                area = {
+                    id: areaResponse.data.id, 
+                    name: areaResponse.data.fields.Name,
+                    timezoneId: areaResponse.data.fields["Timezone ID"]
+                };  
             }
-            const sortedGroups = _.orderBy(groups, ['interest'], ['asc']);
             
-
+            if (userRecord.fields.Groups) {                            //RETRIEVE GROUPS DATA
+                const groupIds = userRecord.fields.Groups;
+                let groups = [];
+                for (let groupId of groupIds) {
+                    const groupResponse = await axios.get(`${baseUrl}/Groups/${groupId}?api_key=${apiKey}`);
+                    const group = createGroupObject(groupResponse.data);
+                    
+                    groups.push(group);
+                }
+                sortedGroups = _.orderBy(groups, ['interest'], ['asc']);
+            }
+            
             const user = {                                                  //DEFINE USER OBJECT
                 recordId: userRecord.id,
                 firstName: userRecord.fields['First Name'],
@@ -72,7 +76,8 @@ export const startSetUser = ({uid, email}) => {
             }
             dispatch(setUser(user));
             return user;
-        } else {
+        } else {                //IF EMAIL NOT FOUND, CREATE RECORD
+            console.log('User not found');
             const postResponse = await axios.post(`${baseUrl}/Users?api_key=${apiKey}`, {"fields": {"Email": email, "Firebase ID": uid}});
             const user = {
                 recordId: postResponse.data.id,
