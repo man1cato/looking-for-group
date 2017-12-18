@@ -17,8 +17,7 @@ export const GroupPage = (props) => (
             <div className="list-header">
                 <div className="list-header__title">Available Times</div>
                 <div className="list-header__subtitle">
-                    <div>Viewing {props.events.length} of {props.group.eventCount} event groups. Filtering is based on your availability.</div>
-                    <div>Select a time to be taken to the corresponding chat group.</div>
+                    Viewing {props.events.length} of {props.group.eventCount} event groups. Filtering is based on your availability. Select a time to be taken to the corresponding chat group.
                 </div>
             </div>
             <div className="list-body">
