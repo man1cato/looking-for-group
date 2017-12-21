@@ -12,7 +12,7 @@ export class ProfilePage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {      //default state
-            uid: props.user.uid,
+            firebaseId: props.user.firebaseId,
             email: props.user.email,
             recordId: props.user.recordId,
             firstName: props.user.firstName || '',
@@ -225,7 +225,7 @@ export class ProfilePage extends React.Component {
                             </table>
                         </div>
                         <div>
-                            <button id="profile-button" className="button">Save Profile</button>
+                            <button id="profile-button" className="button button--profile">Save Profile</button>
                         </div>
                         <div id="map"></div>
                     </form>

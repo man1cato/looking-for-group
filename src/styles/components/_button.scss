@@ -9,6 +9,9 @@
     padding: $s-size;
     border: none;
     text-decoration: none;
+}
+
+.button--profile {
     @media (max-width: $desktop-breakpoint) {
         width: 100%;
     }

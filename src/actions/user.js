@@ -1,6 +1,5 @@
 import axios from 'axios';
 import _ from 'lodash';
-// import updateAirtable from '../utils/updateAirtable';
 import createGroupObject from '../utils/createGroupObject';
 import geolocateUser from '../utils/geolocateUser';
 import updateUsersGroups from '../utils/updateUsersGroups';
@@ -26,15 +25,15 @@ export const startSetUser = ({uid, email}) => {
         const filterFormula = `{Email}="${email}"`;
         const response = await axios.get(`${baseUrl}/Users?filterByFormula=${filterFormula}&api_key=${apiKey}`);
         //IF EMAIL FOUND, GATHER PROFILE INFO
-        if (response.data.records.length > 0) {
+        if (!_.isEmpty(response.data.records)) {
             const userRecord = response.data.records[0];
-            const interest1 = !!userRecord.fields['#1 Interest'] && userRecord.fields['#1 Interest'][0];
-            const interest2 = !!userRecord.fields['#2 Interest'] && userRecord.fields['#2 Interest'][0];
-            const interest3 = !!userRecord.fields['#3 Interest'] && userRecord.fields['#3 Interest'][0];
+            const interest1 = userRecord.fields['#1 Interest'] ? userRecord.fields['#1 Interest'][0] : undefined;
+            const interest2 = userRecord.fields['#2 Interest'] ? userRecord.fields['#2 Interest'][0] : undefined;
+            const interest3 = userRecord.fields['#3 Interest'] ? userRecord.fields['#3 Interest'][0] : undefined;
             const additionalInterests = userRecord.fields["Add'l Interests"] || [];
             const allInterests = _.compact([interest1, interest2, interest3, ...additionalInterests]);
             const userAvailabilityIds = userRecord.fields.Availability;
-            let area = {};  
+            let area;  
             let sortedGroups = [];
             
             if (userRecord.fields.Area) {                         //RETRIEVE AREA DATA
@@ -112,8 +111,7 @@ export const startUpdateUser = (user, placeDetails) => {
     return async (dispatch) => {
         if (user.recordId) {
             axios.patch(`${baseUrl}/Users/${user.recordId}?api_key=${apiKey}`, {"fields": fields});         //UPDATE PROFILE FIELDS
-            // await updateAirtable(user,placeDetails);
-            
+
             /***UPDATE AIRTABLE***/
             const userId = user.recordId;
             const userInterests = user.allInterests;
@@ -141,7 +139,7 @@ export const startUpdateUser = (user, placeDetails) => {
             user.groups = sortedUsersGroups;
             dispatch(startGetEvents(sortedUsersGroups, user.availability));
         } else {
-            axios.post(`${baseUrl}/Users?api_key=${apiKey}`, {"fields": {"Email": user.email, "Firebase ID": user.uid, ...fields}});
+            axios.post(`${baseUrl}/Users?api_key=${apiKey}`, {"fields": {"Email": user.email, "Firebase ID": user.firebaseId, ...fields}});
         }
         console.log('DISPATCHED UPDATED USER:', user);
         dispatch(setUser(user));

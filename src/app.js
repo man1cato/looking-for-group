@@ -43,20 +43,20 @@ firebase.auth().onAuthStateChanged((user) => {
     if (user) {
         console.log('logged in');
         store.dispatch(login(user.uid));
+        store.dispatch(startGetAvailabilities());
+        store.dispatch(startGetInterests());
         store.dispatch(startSetUser(user)).then((userData) => {
             console.log('userData from app.js:', userData);
-            store.dispatch(startGetAvailabilities());
-            store.dispatch(startGetInterests());
             return userData;
         }).then((userData) => {
-            renderApp();
-            if (history.location.pathname === '/') {
-                history.push('/dashboard');
-            }
             if (userData.groups && userData.availability) {
                 return store.dispatch(startGetEvents(userData.groups, userData.availability));
             }
         }).then(() => {
+            renderApp();
+            if (history.location.pathname === '/') {
+                history.push('/dashboard');
+            }
             console.log('State after events from app.js:', store.getState());
         });
     } else {
