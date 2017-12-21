@@ -1,0 +1,60 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render GroupPage correctly 1`] = `
+<div>
+  <div
+    className="page-header"
+  >
+    <div
+      className="content-container page-header--flex"
+    >
+      <img
+        height="62"
+        src="https://dl.airtable.com/EMh8zCldRSic3crgrdl3_large_game-board.png"
+        width="auto"
+      />
+      <div>
+        <h2
+          className="page-header__title"
+        >
+          recVkQSrHafAYQuww
+           Event Groups
+        </h2>
+        <span>
+          rec6NLE3ZCpBgsYIT
+        </span>
+      </div>
+    </div>
+  </div>
+  <div
+    className="content-container"
+  >
+    <div
+      className="list-header"
+    >
+      <div
+        className="list-header__title"
+      >
+        Available Times
+      </div>
+      <div
+        className="list-header__subtitle"
+      >
+        Viewing 
+        2
+         of 
+        7
+         event groups. Filtering is based on your availability. Select a time to be taken to the corresponding chat group.
+      </div>
+    </div>
+    <div
+      className="list-body"
+    >
+      <Connect(EventList)
+        area="rec6NLE3ZCpBgsYIT"
+        interest="recVkQSrHafAYQuww"
+      />
+    </div>
+  </div>
+</div>
+`;

@@ -1,5 +1,6 @@
 import React from 'react';
 import {connect} from 'react-redux';
+import _ from 'lodash';
 import GroupListItem from './GroupListItem';
 import {Link} from 'react-router-dom';
 
@@ -15,17 +16,15 @@ export const GroupList = (props) => (
         <div className="content-container">
             <div className="list-body">
                 {
-                    props.groups ? (
-                        props.groups.length > 0 ? (
-                            props.groups.map((group) => <GroupListItem key={group.id} {...group} /> )
-                        ) : (
-                            <div className="list-item list-item--message">
-                                <div>Please update your <span><Link to='/profile'>profile</Link></span> to see available groups in your area. If you've already done so, please give this a moment to load.</div>
-                            </div>
-                        )
-                    ) : (
+                    !_.isEmpty(props.groups) && !_.isEmpty(props.events) && (
+                        props.groups.map((group) => group.eventCount > 0 && <GroupListItem key={group.id} {...group} /> )
+                    ) || !_.isEmpty(props.groups) && _.isEmpty(props.events) && (
                         <div className="list-item list-item--message">
-                            <div>Please update your <span><Link to='/profile'>profile</Link></span> to see available groups in your area.</div>
+                            <div>Apologies, but it seems there are insufficient users in your area who match your interests.</div>
+                        </div>
+                    ) || (
+                        <div className="list-item list-item--message">
+                            <div>Please update your <span><Link to='/profile'>profile</Link></span> to see available groups in your area. If you've already done so, please give this a moment to load.</div>
                         </div>
                     )
                 }
@@ -37,7 +36,8 @@ export const GroupList = (props) => (
 
 const mapStateToProps = (state) => ({ 
     groups: state.user.groups, 
-    area: state.user.area
+    area: state.user.area,
+    events: state.events
 });
 
 export default connect(mapStateToProps)(GroupList);

@@ -16,7 +16,7 @@ export default async (userRecordId, userInterests, areaRecordId) => {
                     "Area": [areaRecordId]
                 }
             });
-            console.log('Created group:', postResponse.Name);
+            console.log('Created group:', postResponse.data.fields.Name);
             usersGroupIds.push(postResponse.data.id);                                                  //...AND PUSH GROUP INTO GROUP ARRAY 
         } else {                                                            //ELSE IF GROUP FOUND...
             usersGroupIds.push(group.id);                                     //...PUSH GROUP INTO GROUP ARRAY 

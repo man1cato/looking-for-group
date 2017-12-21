@@ -1,0 +1,151 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render GroupList for a user with groups 1`] = `
+<div>
+  <div
+    className="page-header"
+  >
+    <div
+      className="content-container"
+    >
+      <h2
+        className="page-header__title"
+      >
+        My Local Interest Groups
+      </h2>
+      <div>
+        Groups will only appear for those interests that have a sufficient number of people in the area who share that interest.
+      </div>
+    </div>
+  </div>
+  <div
+    className="content-container"
+  >
+    <div
+      className="list-body"
+    >
+      <GroupListItem
+        area="\\"Miami-Fort Lauderdale-West Palm Beach, FL\\""
+        availability={
+          Array [
+            "rectsqF1uDWuxJGWQ",
+            "rec4hxrJGMNk8I5RP",
+            "recPljFv5l1JzHCbP",
+            "recL5BIcv756EQ7oC",
+            "recDniSFi8uMfboQx",
+            "recmiujOyHwlG42hH",
+            "recDmj0waZL3td5fS",
+          ]
+        }
+        eventCount={7}
+        events={
+          Array [
+            "recshxa9OHYHAAoVt",
+            "rec22jQuu4zqD8gs3",
+            "recLfH8xljwjj3Evz",
+            "rec2df6Ju5CxATj45",
+            "rechXOUEJWTQHGwXg",
+            "rec1bJ6FzRCLCHV89",
+            "recmeOzk6VxhIsu9h",
+          ]
+        }
+        id="recTX8o0BxS4iaPQr"
+        interest="Video Games"
+        key="recTX8o0BxS4iaPQr"
+        timezoneId="America/New_York"
+        userCount={5}
+        userIds={
+          Array [
+            "recgCmMoJzRg7XMlU",
+            "reco3FETF7HxNIWfv",
+            "recZZaSE19c9cGypA",
+            "recbkFiE7d9OM1elO",
+            "recb4V06Qm8MvMbJ1",
+          ]
+        }
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`should render GroupList message for a user with groups but no matching events 1`] = `
+<div>
+  <div
+    className="page-header"
+  >
+    <div
+      className="content-container"
+    >
+      <h2
+        className="page-header__title"
+      >
+        My Local Interest Groups
+      </h2>
+      <div>
+        Groups will only appear for those interests that have a sufficient number of people in the area who share that interest.
+      </div>
+    </div>
+  </div>
+  <div
+    className="content-container"
+  >
+    <div
+      className="list-body"
+    >
+      <div
+        className="list-item list-item--message"
+      >
+        <div>
+          Apologies, but it seems there are insufficient users in your area who match your interests.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`should render GroupList message for a user without groups 1`] = `
+<div>
+  <div
+    className="page-header"
+  >
+    <div
+      className="content-container"
+    >
+      <h2
+        className="page-header__title"
+      >
+        My Local Interest Groups
+      </h2>
+      <div>
+        Groups will only appear for those interests that have a sufficient number of people in the area who share that interest.
+      </div>
+    </div>
+  </div>
+  <div
+    className="content-container"
+  >
+    <div
+      className="list-body"
+    >
+      <div
+        className="list-item list-item--message"
+      >
+        <div>
+          Please update your 
+          <span>
+            <Link
+              replace={false}
+              to="/profile"
+            >
+              profile
+            </Link>
+          </span>
+           to see available groups in your area. If you've already done so, please give this a moment to load.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

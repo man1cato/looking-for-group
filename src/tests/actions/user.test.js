@@ -1,22 +1,29 @@
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import user from '../fixtures/user';
-import {startSetUser} from '../../actions/user';
+import {setUser, startSetUser, startUpdateUser} from '../../actions/user';
 
-const uid = 'abc123';
+const uid = user.firebaseId;
 const defaultAuthState = { auth: {uid} };
 const createMockStore = configureMockStore([thunk]);
 
 
-test('should retrieve correct datatypes', () => {
-    const store = createMockStore(defaultAuthState);
-    store.dispatch(startSetUser(user)).then(() => {
-        const actions = store.getActions();
-        expect(actions[0]).toEqual({
-            type: 'UPDATE_USER',
-            user
-        });
-        expect(typeof actions[0].user.birthYear).toBe('number');
+test('should setup set user action object with provided values', () => {
+    const action = setUser(user);
+    expect(action).toEqual({
+        type: 'SET_USER',
+        user
     });
+});
+
+
+// test('should retrieve user data from Airtable', () => {
+//     const action = startSetUser({uid, email: user.email});
     
-})
+// });
+
+
+// test('should create new user in Airtable when new user logs in', () => {
+//     const action = startUpdateUser({uid: 'weatjnad', email: 'newuser@mail.com'});
+    
+// });

@@ -53,13 +53,13 @@ export const startSetUser = ({uid, email}) => {
                 for (let groupId of groupIds) {
                     const groupResponse = await axios.get(`${baseUrl}/Groups/${groupId}?api_key=${apiKey}`);
                     const group = createGroupObject(groupResponse.data);
-                    
                     groups.push(group);
                 }
                 sortedGroups = _.orderBy(groups, ['interest'], ['asc']);
             }
             
             const user = {                                                  //DEFINE USER OBJECT
+                firebaseId: uid,
                 recordId: userRecord.id,
                 firstName: userRecord.fields['First Name'],
                 lastName: userRecord.fields['Last Name'],

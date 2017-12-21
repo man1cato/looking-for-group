@@ -5,7 +5,6 @@ import _ from 'lodash';
 import {startUpdateUser} from '../actions/user';
 import filterInterests from '../utils/filterInterests';
 import filterAvailabilities from '../utils/filterAvailabilities';
-import geolocateUser from '../utils/geolocateUser';
 
 const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
@@ -29,12 +28,12 @@ export class ProfilePage extends React.Component {
             area: props.user.area,
             groups: props.user.groups 
         };
-    };
+    }
     onTextChange = (e) => {
         const id = e.target.id;
         const value = e.target.value;
         this.setState(() => ({ [id]: value }));
-    };
+    }
     onInterestChange = (e) => {
         const id = e.target.id;
         const value = e.target.value;
@@ -76,7 +75,7 @@ export class ProfilePage extends React.Component {
             
             setTimeout(async () => {
                 const placeDetails = await JSON.parse(document.getElementById('placeDetails').textContent);
-                console.log('placeDetails:',placeDetails)
+                console.log('placeDetails:',placeDetails);
                 this.props.startUpdateUser(this.state, placeDetails);                                 //UPDATE USER'S PROFILE
                 document.body.removeChild(scriptBlock);                         //DELETE <DIV> BLOCK TO CLEAR DATA
             }, 2000);
@@ -87,7 +86,7 @@ export class ProfilePage extends React.Component {
         /*****SNACKBAR*****/
         const x = document.getElementById("snackbar");                                      // Get the snackbar DIV
         x.className = "snackbar-show";                                                               // Add the "show" class to DIV
-        setTimeout(function(){ x.className = x.className.replace("snackbar-show", ""); }, 3000);     // After 3 seconds, remove the show class from DIV
+        setTimeout(() => { x.className = x.className.replace("snackbar-show", ""); }, 3000);     // After 3 seconds, remove the show class from DIV
         /******************/
         
         setTimeout(() => {this.props.history.push('/')}, 4000);

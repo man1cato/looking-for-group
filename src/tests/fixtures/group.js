@@ -18,7 +18,7 @@ export default {
         "recbkFiE7d9OM1elO",
         "recb4V06Qm8MvMbJ1"
     ],
-    userCount: 2,
+    userCount: 5,
     events: [
         "recpAxgFeWEq8lJOX",
         "recKgSH7fypDcEmYE",
@@ -29,6 +29,9 @@ export default {
         "rece2nvirgPcN0f4u"    
     ],
     eventCount: 7,
-    timezoneId: 'America/New_York'
+    timezoneId: 'America/New_York',
+    icons: {
+        large: { url: "https://dl.airtable.com/EMh8zCldRSic3crgrdl3_large_game-board.png", width: 64, height: 64 },
+        small: { url: "https://dl.airtable.com/gmMH0qLTD6RwJoijI4Yg_small_game-board.png", width: 36, height: 36 }
+    }
 };
-

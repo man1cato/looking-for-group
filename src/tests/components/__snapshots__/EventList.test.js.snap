@@ -1,0 +1,30 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render event list with empty message 1`] = `
+<div>
+  <div
+    className="list-item list-item--message"
+  >
+    This may take some time to load. If it has been more than a minute, then there are no available event times for this group. 
+  </div>
+</div>
+`;
+
+exports[`should render event list with events 1`] = `
+<div>
+  <Connect(EventListItem)
+    area="\\"Miami-Fort Lauderdale-West Palm Beach, FL\\""
+    availability="reczJFn34Yyf1bCzs"
+    chatGroupUrl="https://app.groupme.com/join_group/36930410/hcggya"
+    date="Dec 21st"
+    groupId="recgQJVVIDDIvgUyw"
+    id="rec07gX9hr16kHYgS"
+    interest="Board Games"
+    key="rec07gX9hr16kHYgS"
+    memberCount={0}
+    occurrence="Thursday Evening"
+    startDatetime="2017-12-21T17:00:00"
+    startTime="5:00 PM"
+  />
+</div>
+`;
