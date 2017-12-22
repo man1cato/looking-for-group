@@ -1,6 +1,6 @@
-import axios from 'axios';
-import Airtable from 'airtable';
-import getStartDatetime from './src/utils/getStartDatetime';
+const axios = require('axios');
+const Airtable = require('airtable');
+const getStartDatetime = require('./src/utils/getStartDatetime');
 
 const apiKey = 'keyzG8AODPdzdkhjG';
 const baseUrl = 'https://api.airtable.com/v0/appOY7Pr6zpzhQs6l';
