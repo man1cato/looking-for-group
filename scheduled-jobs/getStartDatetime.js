@@ -1,5 +1,5 @@
-import axios  from 'axios';
-import moment from 'moment-timezone';
+const axios = require('axios');
+const moment = require('moment-timezone');
 
 const apiKey = 'keyzG8AODPdzdkhjG';
 const baseUrl = 'https://api.airtable.com/v0/appOY7Pr6zpzhQs6l';
@@ -12,7 +12,7 @@ const weekday = new Array(7);
     weekday[5] = "Friday";
     weekday[6] = "Saturday";
 
-export default async (availabilityId, timezoneId) => {
+const getStartDatetime = async (availabilityId, timezoneId) => {
 
     const response = await axios.get(`${baseUrl}/Availability/${availabilityId}?api_key=${apiKey}`);
     const availability = response.data;
@@ -50,4 +50,8 @@ export default async (availabilityId, timezoneId) => {
         // console.log('startDatetime:',startDatetime);
         return startDatetime;
     }
+};
+
+module.exports = {
+    getStartDatetime
 };

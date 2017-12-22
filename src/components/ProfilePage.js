@@ -3,8 +3,6 @@ import {connect} from 'react-redux';
 import moment from 'moment';
 import _ from 'lodash';
 import {startUpdateUser} from '../actions/user';
-import filterInterests from '../utils/filterInterests';
-import filterAvailabilities from '../utils/filterAvailabilities';
 
 const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
@@ -29,6 +27,14 @@ export class ProfilePage extends React.Component {
             groups: props.user.groups 
         };
     }
+    filterInterests = (interests, filteringInterests) => {        //array of objects, array
+        const filterArray = filteringInterests.map((interestId) => _.find(interests, ['id', interestId]) );
+        const filteredInterests = _.difference(interests, filterArray);
+        return filteredInterests;
+    };
+    filterAvailabilities = (availabilities, dayOfWeek) => {
+        return availabilities.filter((availability) => availability.dayOfWeek === dayOfWeek );
+    };
     onTextChange = (e) => {
         const id = e.target.id;
         const value = e.target.value;
@@ -189,7 +195,7 @@ export class ProfilePage extends React.Component {
                             >
                                 <option></option>          //blank option
                                 {
-                                    filterInterests(this.props.interests, [this.state.interest1, this.state.interest2, this.state.interest3])
+                                    this.filterInterests(this.props.interests, [this.state.interest1, this.state.interest2, this.state.interest3])
                                         .map( (interest) => (<option key={interest.id} value={interest.id}>{interest.name}</option>) )
                                 }
                             </select>
@@ -208,7 +214,7 @@ export class ProfilePage extends React.Component {
                                     {weekdays.map((weekday) => (
                                         <tr key={weekday}>
                                             <td className="table__first-column" key={weekday}>{weekday.substr(0,3)}</td>
-                                            {filterAvailabilities(this.props.availabilities, weekday).map((availability) => (
+                                            {this.filterAvailabilities(this.props.availabilities, weekday).map((availability) => (
                                                 <td key={availability.recordId}>
                                                     <input 
                                                         type="checkbox" 

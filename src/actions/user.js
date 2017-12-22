@@ -21,11 +21,10 @@ export const setUser = (user = {}) => ({
 //SET_USER
 export const startSetUser = ({uid, email}) => {
     return async (dispatch) => {
-        //SEARCH AIRTABLE FOR USER'S EMAIL
         const filterFormula = `{Email}="${email}"`;
-        const response = await axios.get(`${baseUrl}/Users?filterByFormula=${filterFormula}&api_key=${apiKey}`);
-        //IF EMAIL FOUND, GATHER PROFILE INFO
-        if (!_.isEmpty(response.data.records)) {
+        const response = await axios.get(`${baseUrl}/Users?filterByFormula=${filterFormula}&api_key=${apiKey}`);    //SEARCH AIRTABLE FOR USER'S EMAIL
+        
+        if (!_.isEmpty(response.data.records)) {                                //IF EMAIL FOUND, GATHER PROFILE INFO FOR STORE
             const userRecord = response.data.records[0];
             const interest1 = userRecord.fields['#1 Interest'] ? userRecord.fields['#1 Interest'][0] : undefined;
             const interest2 = userRecord.fields['#2 Interest'] ? userRecord.fields['#2 Interest'][0] : undefined;
@@ -96,7 +95,7 @@ export const startSetUser = ({uid, email}) => {
 
 //UPDATE_USER
 export const startUpdateUser = (user, placeDetails) => {
-    const fields = {
+    const fields = {                                                            //DEFINE FIELDS TO UPDATE IN AIRTABLE
         "First Name": user.firstName,
         "Last Name": user.lastName,
         "Postal Code": user.postalCode,
@@ -109,39 +108,41 @@ export const startUpdateUser = (user, placeDetails) => {
     };
 
     return async (dispatch) => {
-        if (user.recordId) {
-            axios.patch(`${baseUrl}/Users/${user.recordId}?api_key=${apiKey}`, {"fields": fields});         //UPDATE PROFILE FIELDS
-
-            /***UPDATE AIRTABLE***/
-            const userId = user.recordId;
-            const userInterests = user.allInterests;
-            let areaId = !!user.area ? user.area.id : '';
-            if (placeDetails) {
-                areaId = await geolocateUser(userId, placeDetails);                 //1. GEOLOCATE AND ASSIGN AREA
-            } 
-            
-            const usersGroupIds = await updateUsersGroups(userId, userInterests, areaId);   //2. ADD TO GROUPS BASED ON INTERESTS AND AREA
-            let usersGroups = [];
-            for (let groupId of usersGroupIds) {                                        //3. FOR EACH GROUP...
-                const groupResponse = await axios.get(`${baseUrl}/Groups/${groupId}?api_key=${apiKey}`);
-                let group = await createGroupObject(groupResponse.data);
-                const groupAvailabilities = await updateGroupAvailabilities(group);     //...UPDATE GROUP AVAILABILITY...
-                group.availability = groupAvailabilities;
-                const eventIds = await manageEvents(group);                                            //...AND UPDATE/CREATE EVENTS AND CHAT GROUPS
+        try {
+            if (user.recordId) {
+                axios.patch(`${baseUrl}/Users/${user.recordId}?api_key=${apiKey}`, {"fields": fields});         //UPDATE AIRTABLE PROFILE FIELDS
                 
-                group.events = eventIds;
-                console.log('Updated group:', group);
-                usersGroups.push(group);
+                const userId = user.recordId;
+                const userInterests = user.allInterests;
+                let areaId = !!user.area ? user.area.id : '';
+                if (placeDetails) {                                                 //IF PLACEDETAILS PROVIDED...
+                    areaId = await geolocateUser(userId, placeDetails);             //GEOLOCATE AND ASSIGN AREA
+                } 
+                
+                const usersGroupIds = await updateUsersGroups(userId, userInterests, areaId);   //UPDATE USER'S GROUPS BASED ON INTERESTS AND AREA
+                let usersGroups = [];
+                for (let groupId of usersGroupIds) {                                        //FOR EACH GROUP...
+                    const groupResponse = await axios.get(`${baseUrl}/Groups/${groupId}?api_key=${apiKey}`);
+                    let group = await createGroupObject(groupResponse.data);
+                    const groupAvailabilities = await updateGroupAvailabilities(group);     //UPDATE GROUP AVAILABILITY...
+                    group.availability = groupAvailabilities;
+                    const eventIds = await manageEvents(group);                             //AND UPDATE/CREATE EVENTS AND CHAT GROUPS
+                    
+                    group.events = eventIds;
+                    console.log('Updated group:', group);
+                    usersGroups.push(group);
+                }
+                
+                const sortedUsersGroups = _.orderBy(usersGroups, ['interest'], ['asc']);    
+                user.groups = sortedUsersGroups;
+                dispatch(startGetEvents(sortedUsersGroups, user.availability));         //UPDATE USER'S EVENTS IN STORE
+            } else {
+                axios.post(`${baseUrl}/Users?api_key=${apiKey}`, {"fields": {"Email": user.email, "Firebase ID": user.firebaseId, ...fields}});
             }
-            
-            /***UPDATE USER'S GROUPS IN STORE***/
-            const sortedUsersGroups = _.orderBy(usersGroups, ['interest'], ['asc']);
-            user.groups = sortedUsersGroups;
-            dispatch(startGetEvents(sortedUsersGroups, user.availability));
-        } else {
-            axios.post(`${baseUrl}/Users?api_key=${apiKey}`, {"fields": {"Email": user.email, "Firebase ID": user.firebaseId, ...fields}});
+            console.log('DISPATCHED UPDATED USER:', user);
+            dispatch(setUser(user));
+        } catch (e) {
+            throw new Error('Error in startUpdateUser: ' + e);   
         }
-        console.log('DISPATCHED UPDATED USER:', user);
-        dispatch(setUser(user));
     };
 };
