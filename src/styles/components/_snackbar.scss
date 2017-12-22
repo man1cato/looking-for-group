@@ -1,0 +1,56 @@
+.snackbar {
+  background-color: $dark-blue;
+  opacity: .9;
+  min-height: $s-size;
+  position: fixed;
+  bottom: -120px;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  color: white;
+  font-size: $font-size-medium;
+  line-height: 22px;
+  padding: $m-size;
+  z-index: 9;
+  @media (min-width: $desktop-breakpoint) {
+    max-width: 45rem;
+    border-radius: 2px;
+    margin: $l-size;
+  }
+
+  @media (max-width: $desktop-breakpoint) {
+    left: 0;
+    right: 0;
+  }
+} 
+
+.snackclose {
+  display:none;
+  z-index:10;
+}
+
+.animated-show {
+  animation-name: snackbar-show;
+  animation-duration: 1s;
+  animation-direction: forwards;
+  animation-timing-function: ease;
+  // animation-delay: 1s;
+  animation-fill-mode: forwards;
+}
+.animated-hide {
+  animation-name: snackbar-hide;
+  animation-duration: 1s;
+  animation-direction: backwards;
+  animation-timing-function: ease;
+  // animation-delay: 1s;
+  animation-fill-mode: backwards;
+}
+@keyframes snackbar-show {
+  0% { bottom: -120px; }
+  100% {bottom: 50px; }
+} 
+@keyframes snackbar-hide {
+  0% {bottom: 50px; }
+  100% {bottom: -120px; }
+}

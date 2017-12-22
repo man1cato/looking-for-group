@@ -90,9 +90,8 @@ export class ProfilePage extends React.Component {
         }
         
         /*****SNACKBAR*****/
-        const x = document.getElementById("snackbar");                                      // Get the snackbar DIV
-        x.className = "snackbar-show";                                                               // Add the "show" class to DIV
-        setTimeout(() => { x.className = x.className.replace("snackbar-show", ""); }, 3000);     // After 3 seconds, remove the show class from DIV
+        const snackbar = document.getElementById("snackbar");                   // Get the snackbar DIV
+        snackbar.className = "snackbar animated-show";                          // Trigger the show animation
         /******************/
         
         setTimeout(() => {this.props.history.push('/')}, 4000);
@@ -236,7 +235,11 @@ export class ProfilePage extends React.Component {
                         <div id="map"></div>
                     </form>
                 </div>
-                <div className="snackbar" id="snackbar">Profile has been updated! Redirecting to dashboard...</div>
+                
+                <div className="snackbar" id="snackbar">
+                    <span>Profile has been updated. Redirecting to dashboard...</span>
+                </div>
+                
             </div>
         );
     }
