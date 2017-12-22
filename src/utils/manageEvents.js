@@ -1,6 +1,6 @@
-const axios = require('axios');
-const getStartDatetime = require('./getStartDatetime');
-const createChatGroup = require('./createChatGroup');
+import axios from 'axios';
+import getStartDatetime from './getStartDatetime';
+import createChatGroup from './createChatGroup';
 
 const apiKey = 'keyzG8AODPdzdkhjG';
 const baseUrl = 'https://api.airtable.com/v0/appOY7Pr6zpzhQs6l';
@@ -21,14 +21,7 @@ export default async (group, userId) => {
             const event = eventResponse.data.records[0];
             const startDatetime = await getStartDatetime(availabilityId, timezoneId);
 
-            if (event) {                                                        //IF EVENT EXISTS...
-                axios.patch(`${baseUrl}/Events/${event.id}?api_key=${apiKey}`, {    //UPDATE EVENT START TIME
-                    "fields": {
-                        "Start Date & Time": startDatetime
-                    }
-                });
-                console.log("Event exists:", event.fields.Name, startDatetime);
-            } else {                                                            //IF EVENT DOESN'T EXIST...  
+            if (!event) {                                                            //IF EVENT DOESN'T EXIST...  
                 const postResponse = await axios.post(`${baseUrl}/Events?api_key=${apiKey}`, {      //CREATE IT...   
                     "fields": {
                         "Group": [groupId],
