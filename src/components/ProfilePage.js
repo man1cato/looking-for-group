@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import moment from 'moment';
 import _ from 'lodash';
 import {startUpdateUser} from '../actions/user';
+// import loader from '!!file-loader!../../public/images/loader.gif';
 
 const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
@@ -24,7 +25,8 @@ export class ProfilePage extends React.Component {
             allInterests: props.user.allInterests,
             availability: props.user.availability || '',
             area: props.user.area,
-            groups: props.user.groups 
+            groups: props.user.groups,
+            buttonDisabled: true
         };
     }
     filterInterests = (interests, filteringInterests) => {        //array of objects, array
@@ -35,6 +37,10 @@ export class ProfilePage extends React.Component {
     filterAvailabilities = (availabilities, dayOfWeek) => {
         return availabilities.filter((availability) => availability.dayOfWeek === dayOfWeek );
     };
+    onFormChange = () => {
+        this.setState(() => ({ buttonDisabled: false }));
+        document.getElementById('profile-button').className = "button button--profile";
+    }
     onTextChange = (e) => {
         const id = e.target.id;
         const value = e.target.value;
@@ -68,8 +74,12 @@ export class ProfilePage extends React.Component {
     }
     onSubmit = (e) => {
         e.preventDefault();
+        this.setState(() => ({ buttonDisabled: true }));
+        document.getElementById('profile-button').className = "button button--disabled button--profile";
+        // document.getElementById('profile-button').disabled = true;              //DISABLE SUBMIT BUTTON
+        document.getElementById("snackbar").className = "snackbar animated-show";    // TRIGGER SNACKBAR ANIMATION
         
-        if (this.state.postalCode !== this.props.user.postalCode) {
+        if (this.state.postalCode !== this.props.user.postalCode) {             //IF POSTAL CODE WAS UPDATED...
             
             const scriptBlock = document.createElement('div');                  //CREATE <DIV> TO HOLD TEMPORARY DATA
             scriptBlock.id = 'scriptBlock';
@@ -81,20 +91,17 @@ export class ProfilePage extends React.Component {
             
             setTimeout(async () => {
                 const placeDetails = await JSON.parse(document.getElementById('placeDetails').textContent);
-                console.log('placeDetails:',placeDetails);
-                this.props.startUpdateUser(this.state, placeDetails);                                 //UPDATE USER'S PROFILE
+                // console.log('placeDetails:',placeDetails);
+                await this.props.startUpdateUser(this.state, placeDetails);                                 //UPDATE USER'S PROFILE
                 document.body.removeChild(scriptBlock);                         //DELETE <DIV> BLOCK TO CLEAR DATA
+                this.props.history.push('/');
             }, 2000);
         } else {
-            this.props.startUpdateUser(this.state);                                 //UPDATE USER'S PROFILE
+            setTimeout(async () => {
+                await this.props.startUpdateUser(this.state);                   //UPDATE USER'S PROFILE
+                this.props.history.push('/');
+            }, 2000);
         }
-        
-        /*****SNACKBAR*****/
-        const snackbar = document.getElementById("snackbar");                   // Get the snackbar DIV
-        snackbar.className = "snackbar animated-show";                          // Trigger the show animation
-        /******************/
-        
-        setTimeout(() => {this.props.history.push('/')}, 4000);
     };
     render() {
         return (
@@ -104,7 +111,7 @@ export class ProfilePage extends React.Component {
                     <h2>User Profile</h2>
                 </div> 
                 <div>
-                    <form className="form" onSubmit={this.onSubmit}>
+                    <form className="form" onChange={this.onFormChange} onSubmit={this.onSubmit}>
                         <div className="input">
                             <h4>Name:</h4> 
                             <input
@@ -230,14 +237,14 @@ export class ProfilePage extends React.Component {
                             </table>
                         </div>
                         <div>
-                            <button id="profile-button" className="button button--profile">Save Profile</button>
+                            <button id="profile-button" className="button button--disabled button--profile" disabled={this.state.buttonDisabled}>Save Profile</button>
                         </div>
                         <div id="map"></div>
                     </form>
                 </div>
                 
                 <div className="snackbar" id="snackbar">
-                    <span>Profile has been updated. Redirecting to dashboard...</span>
+                    Profile has been updated. Redirecting to dashboard... 
                 </div>
                 
             </div>
