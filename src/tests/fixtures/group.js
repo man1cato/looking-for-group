@@ -2,7 +2,7 @@ export default {
     id: 'rec3efUmEzGBWvGYG', 
     area: 'rec6NLE3ZCpBgsYIT',
     interest: 'recVkQSrHafAYQuww',
-    availability: [
+    availabilityIds: [
         "rectsqF1uDWuxJGWQ",
         "rec4hxrJGMNk8I5RP",
         "recPljFv5l1JzHCbP",

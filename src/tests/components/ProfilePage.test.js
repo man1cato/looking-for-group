@@ -13,7 +13,7 @@ test('should render ProfilePage correctly', () => {
             startUpdateUser={startUpdateUser}
             user={user}
             interests={interests}
-        />)
+        />);
     expect(wrapper).toMatchSnapshot();
 });
 

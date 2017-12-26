@@ -5,7 +5,7 @@ const lfgBaseUrl = 'https://api.airtable.com/v0/appOY7Pr6zpzhQs6l';
 
 
 //UPDATE LOCATION FIELDS FOR USER
-export default (recordId, placeDetails) => {
+export default (userId, placeDetails) => {
     console.log('placeDetails:',placeDetails);
     const addressComponents = placeDetails.address_components;
 
@@ -38,7 +38,7 @@ export default (recordId, placeDetails) => {
         return axios.get(`${lfgBaseUrl}/Areas?filterByFormula=${msaFilter}&api_key=${apiKey}`);
     }).then((areaResponse) => {
         const areaId = areaResponse.data.records[0].id;
-        axios.patch(`${lfgBaseUrl}/Users/${recordId}?api_key=${apiKey}`, {
+        axios.patch(`${lfgBaseUrl}/Users/${userId}?api_key=${apiKey}`, {
             "fields": {
                 "County": county,
                 "City": city,

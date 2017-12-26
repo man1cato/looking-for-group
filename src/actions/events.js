@@ -47,7 +47,7 @@ export const startGetEvents = (usersGroups, userAvailabilityIds) => {
             const sortedEvents = _.orderBy(events, ['startDatetime'], ['asc']);     //SORT ALPHABETICALLY
             dispatch(getEvents((sortedEvents)));                                    //DISPATCH TO STORE
         } catch (e) {
-            throw new Error('Failed to retrieve groups in startGetEvents', e.message);
+            throw new Error('Failed to retrieve groups in startGetEvents' + e);
         }
     };
 };
