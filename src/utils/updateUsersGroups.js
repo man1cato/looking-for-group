@@ -90,7 +90,7 @@ export default async (userId, userInterestIds, userAreaId) => {
        
         
     } catch (e) {
-        throw new Error('Error in newUpdateUsersGroups: ' + e);
+        throw new Error('Error in updateUsersGroups: ' + e);
     }
 };
 
