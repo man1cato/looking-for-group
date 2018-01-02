@@ -28,6 +28,13 @@
         display: flex;
         align-items: center;
     }
+    img {
+        height: 32px; 
+        width: auto;
+        @media(max-width: $desktop-breakpoint) {
+            height: 24px;
+        }
+    }
     > * {
         padding: 0 $s-size;
     }

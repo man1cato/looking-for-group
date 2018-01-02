@@ -11,7 +11,8 @@ export const Header = ({startLogout}) => (
                     <h1>Looking For Group</h1>
                 </Link>
                 <div className="header__links">
-                    <Link to="/profile"><img src='/images/user-profile-white.png' height="32" width="auto" /></Link>
+                    <Link to="/profile"><img src='/images/user-profile-white.png' /></Link>
+                    <Link to="/bug-report"><img src='/images/bug-icon.png' /></Link>
                     <button className="button button--link" onClick={startLogout}>Logout</button>
                 </div>
             </div>

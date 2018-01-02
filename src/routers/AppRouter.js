@@ -7,6 +7,8 @@ import DashboardPage from '../components/DashboardPage';
 import GroupPage from '../components/GroupPage';
 import ProfilePage from '../components/ProfilePage';
 import NotFoundPage from '../components/NotFoundPage';
+import BugPage from '../components/BugPage';
+
 import PrivateRoute from './PrivateRoute';
 import PublicRoute from './PublicRoute';
 
@@ -20,6 +22,7 @@ const AppRouter = () => (
                 <PrivateRoute path="/dashboard" component={DashboardPage} />
                 <PrivateRoute path="/groups/:id" component={GroupPage} />
                 <PrivateRoute path="/profile" component={ProfilePage} />
+                <PrivateRoute path="/bug-report" component={BugPage} />
                 <Route component={NotFoundPage} />
             </Switch>
         </div>
