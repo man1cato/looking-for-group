@@ -20,7 +20,7 @@ export const GroupList = (props) => (
                         props.groups.map((group) => group.eventCount > 0 && <GroupListItem key={group.id} {...group} /> )
                     ) || !_.isEmpty(props.groups) && _.isEmpty(props.events) && (
                         <div className="list-item list-item--message">
-                            <div>Apologies, but it seems there are insufficient users in your area who match your interests. We are currently testing in Roanoke, VA and Miami, FL.</div>
+                            <div>It seems that your interest groups are still growing their populations. As an early tester, this is expected. Please check back soon to see which interests groups become available as other users join!</div>
                         </div>
                     ) || (
                         <div className="list-item list-item--message">
