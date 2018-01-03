@@ -31,7 +31,7 @@ export default async (userId, userInterestIds, userAreaId) => {
                 const groupId = group.id;
                 const groupUserIds = group.userIds;
                 const groupAvailabilityIds = group.availabilityIds;
-                console.log('Initial group availability:', groupAvailabilityIds);
+                // console.log('Initial group availability:', groupAvailabilityIds);
                 let groupAvailability = {};                                                 //CREATE NEW GROUP AVAILABILITY OBJECT
                 for (let userId of groupUserIds) {                                          //FOR EACH USER IN GROUP...
                     const userResponse = await axios.get(`${baseUrl}/Users/${userId}?api_key=${apiKey}`);   
@@ -45,7 +45,7 @@ export default async (userId, userInterestIds, userAreaId) => {
                         }
                     }
                 }
-                console.log('groupAvailability before:', groupAvailability);
+                // console.log('groupAvailability before:', groupAvailability);
                 
                 for (let availabilityId in groupAvailability){                              //FOR EACH KEY (AVAILABILITY) IN THE OBJECT...
                     if (groupAvailability[availabilityId] < 4){                             //IF VALUE (COUNT) IS LESS THAN 4...
@@ -53,7 +53,7 @@ export default async (userId, userInterestIds, userAreaId) => {
                     }
                 }
                 
-                console.log('groupAvailability after:',groupAvailability);
+                // console.log('groupAvailability after:',groupAvailability);
                 const newGroupAvailabilityIds = Object.keys(groupAvailability);             //CONVERT OBJECT BACK TO ARRAY
                 console.log('newGroupAvailability:',newGroupAvailabilityIds);
                 

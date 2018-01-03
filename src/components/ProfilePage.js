@@ -244,7 +244,7 @@ export class ProfilePage extends React.Component {
                 </div>
                 
                 <div className="snackbar" id="snackbar">
-                    Profile has been updated. Redirecting to dashboard... 
+                    Profile has been updated. Redirecting to dashboard. This may take a minute... 
                 </div>
                 
             </div>
