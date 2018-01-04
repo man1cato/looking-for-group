@@ -31,7 +31,7 @@ export default (userId, placeDetails) => {
     county = county.trim();
 
     const locationFilter = `{Location}="${county}, ${state}"`;
-    
+    console.log('locationFilter from geolocateUser:', locationFilter);    
     return axios.get(`https://api.airtable.com/v0/appRj3ISj9TSjRvot/Counties?filterByFormula=${locationFilter}&api_key=${apiKey}`).then((locationResponse) => {
         const msaCode = locationResponse.data.records[0].fields.MSA_text;
         const msaFilter = `{MSA Code}="${msaCode}"`;

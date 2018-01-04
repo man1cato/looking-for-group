@@ -80,7 +80,7 @@ export class ProfilePage extends React.Component {
         document.getElementById("snackbar").className = "snackbar animated-show";    // TRIGGER SNACKBAR ANIMATION
         
         if (this.state.postalCode !== this.props.user.postalCode) {             //IF POSTAL CODE WAS UPDATED...
-            
+            console.log('Postal code changed');
             const scriptBlock = document.createElement('div');                  //CREATE <DIV> TO HOLD TEMPORARY DATA
             scriptBlock.id = 'scriptBlock';
             document.body.appendChild(scriptBlock);
@@ -90,13 +90,15 @@ export class ProfilePage extends React.Component {
             document.getElementById('scriptBlock').appendChild(scriptNode);
             
             setTimeout(async () => {
+                console.log('textContent from ProfilePage:',document.getElementById('placeDetails').textContent);
                 const placeDetails = await JSON.parse(document.getElementById('placeDetails').textContent);
                 // console.log('placeDetails:',placeDetails);
                 await this.props.startUpdateUser(this.state, placeDetails);                                 //UPDATE USER'S PROFILE
                 document.body.removeChild(scriptBlock);                         //DELETE <DIV> BLOCK TO CLEAR DATA
                 this.props.history.push('/');
-            }, 2000);
+            }, 2500);
         } else {
+            console.log('Profile changed');
             setTimeout(async () => {
                 await this.props.startUpdateUser(this.state);                   //UPDATE USER'S PROFILE
                 this.props.history.push('/');
@@ -106,7 +108,6 @@ export class ProfilePage extends React.Component {
     render() {
         return (
             <div className="content-container">
-            {console.log('Render ProfilePage:', this.state)}
                 <div>
                     <h2>User Profile</h2>
                 </div> 

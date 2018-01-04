@@ -19,11 +19,14 @@ export const setUser = (user = {}) => ({
 //SET_USER
 export const startSetUser = ({uid, email}) => {
     return async (dispatch) => {
-        const filterFormula = `{Email}="${email}"`;
-        const response = await axios.get(`${baseUrl}/Users?filterByFormula=${filterFormula}&api_key=${apiKey}`);    //SEARCH AIRTABLE FOR USER'S EMAIL
+        const uidSearchFormula = `{Firebase ID}="${uid}"`;
+        const uidSearchResponse = await axios.get(`${baseUrl}/Users?filterByFormula=${uidSearchFormula}&api_key=${apiKey}`); //SEARCH AIRTABLE FOR USER'S FIREBASE ID
         
-        if (!_.isEmpty(response.data.records)) {                                //IF EMAIL FOUND, GATHER PROFILE INFO FOR STORE
-            const userRecord = response.data.records[0];
+        // const emailSearchFormula = `{Email}="${lowercaseEmail}"`;
+        // const emailSearchResponse = await axios.get(`${baseUrl}/Users?filterByFormula=${emailSearchFormula}&api_key=${apiKey}`);    //SEARCH AIRTABLE FOR USER'S EMAIL
+        
+        if (!_.isEmpty(uidSearchResponse.data.records)) {                                //IF USER FOUND, GATHER PROFILE INFO FOR STORE
+            const userRecord = uidSearchResponse.data.records[0];
             const interest1 = userRecord.fields['#1 Interest'] ? userRecord.fields['#1 Interest'][0] : undefined;
             const interest2 = userRecord.fields['#2 Interest'] ? userRecord.fields['#2 Interest'][0] : undefined;
             const interest3 = userRecord.fields['#3 Interest'] ? userRecord.fields['#3 Interest'][0] : undefined;
@@ -72,7 +75,7 @@ export const startSetUser = ({uid, email}) => {
                 groups: sortedGroups
             };
             
-            if(!response.data.records[0].fields['Firebase ID']) {           //IF FIREBASE ID NOT PRESENT IN RECORD, ADD TO RECORD
+            if(!uidSearchResponse.data.records[0].fields['Firebase ID']) {           //IF FIREBASE ID NOT PRESENT IN RECORD, ADD TO RECORD
                 axios.patch(`${baseUrl}/Users/${user.recordId}?api_key=${apiKey}`, {"fields": {"Firebase ID": uid} } );
             }
             dispatch(setUser(user));
