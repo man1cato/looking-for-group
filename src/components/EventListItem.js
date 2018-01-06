@@ -9,7 +9,7 @@ const baseUrl = 'https://api.airtable.com/v0/appOY7Pr6zpzhQs6l';
 export class EventListItem extends React.Component {
     constructor(props) {
         super(props);
-    };
+    }
     onSelectChatGroup = () => {
         const eventId = this.props.id;
         const memberIds = this.props.memberIds || [];
@@ -18,7 +18,7 @@ export class EventListItem extends React.Component {
             "fields": {
                 "Members": memberIds
             }
-        })
+        });
     }
     render() {
         return (
@@ -27,10 +27,10 @@ export class EventListItem extends React.Component {
                     <div className="list-item__left">
                         <h3 className="list-item__title">{this.props.occurrence}</h3>
                     </div>
-                    <div>{this.props.date}, {this.props.startTime}</div>
+                    <div>{this.props.timeRange}</div>
                 </div>
             </a>
-        )
+        );
     }
 }
 

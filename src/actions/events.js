@@ -31,6 +31,7 @@ export const startGetEvents = (usersGroups, userAvailabilityIds) => {
                             interest: group.interest,
                             area: group.area,
                             availability: event.fields.Availability[0],
+                            timeRange: event.fields['Time Range'],
                             occurrence: event.fields.Occurrence,
                             startDatetime,
                             date: moment(startDatetime).format('MMM Do'),
