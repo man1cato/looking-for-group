@@ -4,7 +4,7 @@ import moment from 'moment-timezone';
 const airtableBaseUrl = 'https://api.airtable.com/v0/appOY7Pr6zpzhQs6l';
 const apiKey = 'keyzG8AODPdzdkhjG';
 const groupmeBaseUrl = 'https://api.groupme.com/v3';
-const ACCESS_TOKEN = '47ae92f0c4190135d3e50f90f2367d88';
+const ACCESS_TOKEN = 'bcd8d3c0e049013585f90c9514cbdeb5';
 
 export default async (event, timezoneId) => {
     const eventId = event.id;
