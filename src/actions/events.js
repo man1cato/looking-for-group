@@ -3,7 +3,7 @@ import moment from 'moment-timezone';
 import _ from 'lodash';
 
 
-const apiKey= 'keyzG8AODPdzdkhjG';
+const apiKey = process.env.AIRTABLE_API_KEY;
 const baseUrl = 'https://api.airtable.com/v0/appOY7Pr6zpzhQs6l';
 
 //GET_EVENTS

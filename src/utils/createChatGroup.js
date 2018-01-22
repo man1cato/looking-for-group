@@ -2,9 +2,9 @@ import axios from 'axios';
 import moment from 'moment-timezone';
 
 const airtableBaseUrl = 'https://api.airtable.com/v0/appOY7Pr6zpzhQs6l';
-const apiKey = 'keyzG8AODPdzdkhjG';
+const apiKey = process.env.AIRTABLE_API_KEY;
 const groupmeBaseUrl = 'https://api.groupme.com/v3';
-const ACCESS_TOKEN = 'bcd8d3c0e049013585f90c9514cbdeb5';
+const groupmeAccessToken = process.env.GROUPME_ACCESS_TOKEN;
 
 export default async (event, timezoneId) => {
     const eventId = event.id;
@@ -24,7 +24,7 @@ export default async (event, timezoneId) => {
     
     const groupmeThumbnailUrl = event.fields["GroupMe Thumbnail URL"][0];
     
-    const postResponse = await axios.post(`${groupmeBaseUrl}/groups?access_token=${ACCESS_TOKEN}`, {    //CREATE GROUP
+    const postResponse = await axios.post(`${groupmeBaseUrl}/groups?access_token=${groupmeAccessToken}`, {    //CREATE GROUP
         name,
         description: `${occurrence} ${interest} in the ${area} area`,
         image_url: groupmeThumbnailUrl,
@@ -58,6 +58,6 @@ export default async (event, timezoneId) => {
     ];
         
     for (let message of messages) {
-        await axios.post(`${groupmeBaseUrl}/groups/${groupId}/messages?access_token=${ACCESS_TOKEN}`, {"message": {"text": message}});
+        await axios.post(`${groupmeBaseUrl}/groups/${groupId}/messages?access_token=${groupmeAccessToken}`, {"message": {"text": message}});
     }
 };

@@ -3,7 +3,7 @@
 const axios = require('axios');
 const moment = require('moment-timezone');
 
-const apiKey = 'keyzG8AODPdzdkhjG';
+const apiKey = process.env.AIRTABLE_API_KEY;
 const baseUrl = 'https://api.airtable.com/v0/appOY7Pr6zpzhQs6l';
 
 const googleMapsClient = require('@google/maps').createClient({key: 'AIzaSyAF7euYoPETRn3zBzuk2bPTit2QS-R6ncc', Promise: Promise});

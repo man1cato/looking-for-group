@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const apiKey= 'keyzG8AODPdzdkhjG';
+const apiKey= process.env.AIRTABLE_API_KEY;
 
 //GET_AREAS
 export const getArea = (area) => ({

@@ -29,6 +29,41 @@ export class ProfilePage extends React.Component {
             buttonDisabled: true
         };
     }
+    // componentDidMount() {
+    //     try {
+    //         navigator.geolocation.getCurrentPosition((position) => {
+    //             console.log("User's position:", position);
+    //             const latlng = position.coords.latitude + ',' + position.coords.longitude;
+    //             const geocoder = new google.maps.Geocoder;
+    //             geocoder.geocode({'location': latlng}, (results, status) => {
+    //               if (status === 'OK') {
+    //                 if (results[0]) {
+    //                     console.log('Reverse geocoding results:', results[0]); 
+    //                 } else {
+    //                   console.log('No results found');
+    //                 }
+    //               } else {
+    //                 console.log('Geocoder failed due to: ' + status);
+    //               }
+    //             });
+    //         });
+    //     } catch (e) {
+    //         switch(e.code) {
+    //             case e.PERMISSION_DENIED:
+    //                 console.log("User denied the request for Geolocation.");
+    //                 break;
+    //             case e.POSITION_UNAVAILABLE:
+    //                 console.log("Location information is unavailable.");
+    //                 break;
+    //             case e.TIMEOUT:
+    //                 console.log("The request to get user location timed out.");
+    //                 break;
+    //             case e.UNKNOWN_ERROR:
+    //                 console.log("An unknown error occurred.");
+    //                 break;
+    //         }
+    //     }
+    // }
     filterInterests = (interests, filteringInterests) => {        //array of objects, array
         const filterArray = filteringInterests.map((interestId) => _.find(interests, ['id', interestId]) );
         const filteredInterests = _.difference(interests, filterArray);
@@ -243,7 +278,6 @@ export class ProfilePage extends React.Component {
                         <div id="map"></div>
                     </form>
                 </div>
-                
                 <div className="snackbar" id="snackbar">
                     Profile has been updated. Redirecting to dashboard. This may take a minute... 
                 </div>
