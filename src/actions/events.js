@@ -28,6 +28,7 @@ export const startGetEvents = (usersGroups, userAvailabilityIds) => {
                         const startDatetime = event.fields['Start Date & Time'];
                         events.push({                                           //ADD THE EVENT TO THE EVENTS ARRAY
                             id: event.id, 
+                            order: event.fields.Order,
                             interest: group.interest,
                             area: group.area,
                             availability: event.fields.Availability[0],
@@ -45,7 +46,7 @@ export const startGetEvents = (usersGroups, userAvailabilityIds) => {
                 }
             }
             console.log("User's events:", events);
-            const sortedEvents = _.orderBy(events, ['startDatetime'], ['asc']);     //SORT ALPHABETICALLY
+            const sortedEvents = _.orderBy(events, ['order'], ['asc']);     //SORT ALPHABETICALLY
             dispatch(getEvents((sortedEvents)));                                    //DISPATCH TO STORE
         } catch (e) {
             throw new Error('Failed to retrieve groups in startGetEvents' + e);

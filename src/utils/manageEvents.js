@@ -9,14 +9,14 @@ const baseUrl = 'https://api.airtable.com/v0/appOY7Pr6zpzhQs6l';
 
 export default async (group, userId) => {
     try {
-        const groupAvailabilityIds = group.availabilityIds;
-    
-        if (groupAvailabilityIds.length > 0) {
+        const filteredAvailabilityIds = group.availabilities.filter((availability) => availability.userCount > 3).map((availability) => availability.id);
+        
+        if (filteredAvailabilityIds.length > 0) {
             const groupId = group.id;
             const timezoneId = group.timezoneId;
             let eventIds = group.events || [];
             
-            for (let availabilityId of groupAvailabilityIds) {                      //FOR EACH GROUP AVAILABILITY...
+            for (let availabilityId of filteredAvailabilityIds) {                      //FOR EACH GROUP AVAILABILITY...
             
                 const filter = `AND({Group Record ID}="${groupId}",{Availability Record ID}="${availabilityId}")`;  //FIND THE MATCHING EVENT
                 const eventResponse = await axios.get(`${baseUrl}/Events?filterByFormula=${filter}&api_key=${apiKey}`); 

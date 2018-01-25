@@ -9,7 +9,7 @@ export const EventList = (props) => (
                 props.events.length > 0 ? (
                     props.events.map((event) => {
                         if (props.interest === event.interest) {
-                            return (<EventListItem key={event.id} {...event} /> );
+                            return (<EventListItem key={event.id} {...event} groupAvailabilities={props.groupAvailabilities}/> );
                         }
                     })
                 ) : (

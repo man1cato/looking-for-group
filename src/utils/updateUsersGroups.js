@@ -6,7 +6,7 @@ import manageEvents from './manageEvents';
 const apiKey = process.env.AIRTABLE_API_KEY;
 const baseUrl = 'https://api.airtable.com/v0/appOY7Pr6zpzhQs6l';
 
-export default async (userId, userInterestIds, userAreaId) => {
+export default async (userId, userInterestIds, userAreaId, userAvailabilityIds) => {
     try {
         let usersGroups = [];
         for (let interestId of userInterestIds) {                                                                //FOR EACH INTEREST...
@@ -29,35 +29,28 @@ export default async (userId, userInterestIds, userAreaId) => {
                 const group = await createGroupObject(groupsResponse.data.records[0]);     //CREATE GROUP OBJECT FOR STORE
                 
                 const groupId = group.id;
-                const groupUserIds = group.userIds;
-                const groupAvailabilityIds = group.availabilityIds;
-                // console.log('Initial group availability:', groupAvailabilityIds);
-                let groupAvailability = {};                                                 //CREATE NEW GROUP AVAILABILITY OBJECT
-                for (let userId of groupUserIds) {                                          //FOR EACH USER IN GROUP...
-                    const userResponse = await axios.get(`${baseUrl}/Users/${userId}?api_key=${apiKey}`);   
-                    const userAvailabilityIds = userResponse.data.fields.Availability;      //GET THEIR AVAILABILITIES...
+                const groupAvailabilityIds = group.availabilities.map((availability) => availability.id);
+
+                let groupAvailabilities = group.availabilities;
+
+                for (let userAvailabilityId of userAvailabilityIds) {                                           //FOR EACH AVAILABILITY...
                     
-                    for (let availabilityId of userAvailabilityIds) {                       //FOR EACH AVAILABILITY...
-                        if (groupAvailability.hasOwnProperty(availabilityId) == false){     //IF GROUP DOES NOT HAVE MATCHING AVAILABILITY...
-                            groupAvailability[availabilityId] = 1;                          //ADD IT TO THE OBJECT AND SET COUNT TO 1
-                        } else {
-                            groupAvailability[availabilityId] += 1;                         //ELSE, INCREASE COUNT BY ONE
-                        }
-                    }
-                }
-                // console.log('groupAvailability before:', groupAvailability);
-                
-                for (let availabilityId in groupAvailability){                              //FOR EACH KEY (AVAILABILITY) IN THE OBJECT...
-                    if (groupAvailability[availabilityId] < 4){                             //IF VALUE (COUNT) IS LESS THAN 4...
-                        delete groupAvailability[availabilityId];                           //REMOVE THE AVAILABILITY FROM THE OBJECT
+                    const availability = groupAvailabilities.find((item) => item.id === userAvailabilityId);    //FIND MATCHING GROUP AVAILABILITY...
+                    
+                    if (availability) {                                                                         //IF AVAILABILITY FOUND...
+                        const index = groupAvailabilities.map((item) => item.id).indexOf(availability.id);
+                        groupAvailabilities[index].userCount += 1;                                              //INCREASE COUNT BY ONE
+                    } else {
+                        groupAvailabilities.push({                                                              //ELSE, ADD IT AND SET COUNT TO 1
+                            id: userAvailabilityId,
+                            userCount: 1
+                        });
                     }
                 }
                 
-                // console.log('groupAvailability after:',groupAvailability);
-                const newGroupAvailabilityIds = Object.keys(groupAvailability);             //CONVERT OBJECT BACK TO ARRAY
-                console.log('newGroupAvailability:',newGroupAvailabilityIds);
-                
-                if (!_.isEmpty(_.uniq(_.concat(newGroupAvailabilityIds,groupAvailabilityIds)))) {       //IF RESULTING ARRAY IS DIFFERENT FROM INITIAL ARRAY...
+                const newGroupAvailabilityIds = groupAvailabilities.filter((availability) => availability.userCount > 3).map((availability) => availability.id);
+
+                if (!_.isEmpty(_.uniq(_.concat(newGroupAvailabilityIds, groupAvailabilityIds)))) {       //IF RESULTING ARRAY IS DIFFERENT FROM INITIAL ARRAY...
                     console.log('Group availability changed');
                     axios.patch(`${baseUrl}/Groups/${groupId}?api_key=${apiKey}`, {         //UPDATE GROUP RECORD
                         "fields" : {
@@ -66,7 +59,7 @@ export default async (userId, userInterestIds, userAreaId) => {
                     });
                 }
                 
-                group.availabilityIds = newGroupAvailabilityIds;
+                group.availabilities = groupAvailabilities;
                 
                 /**UPDATE GROUP'S EVENTS**/
                 
@@ -76,7 +69,7 @@ export default async (userId, userInterestIds, userAreaId) => {
                 usersGroups.push(group);
             }
         }
-        console.log("User's groups:", usersGroups);
+        
         const usersGroupIds = usersGroups.map((group) => group.id );
         axios.patch(`${baseUrl}/Users/${userId}?api_key=${apiKey}`,{      //FINALLY, UPDATE USER'S GROUPS
             "fields": {
@@ -85,6 +78,7 @@ export default async (userId, userInterestIds, userAreaId) => {
         });
         
         const sortedUsersGroups = _.orderBy(usersGroups, ['interest'], ['asc']);    //SORT ARRAY ALPHABETICALLY
+        console.log("User's groups:", sortedUsersGroups);
         
         return sortedUsersGroups;
        

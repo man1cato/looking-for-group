@@ -29,6 +29,10 @@ export class EventListItem extends React.Component {
                     </div>
                     <div>{this.props.timeRange}</div>
                 </div>
+                <div className="list-item__right">
+                    <div>{this.props.groupAvailabilities.find((availability) => availability.id === this.props.availability).userCount}</div>
+                    <img src="/images/users-black.png" height="24" width="auto" /> 
+                </div>
             </a>
         );
     }

@@ -22,9 +22,6 @@ export const startSetUser = ({uid, email}) => {
         const uidSearchFormula = `{Firebase ID}="${uid}"`;
         const uidSearchResponse = await axios.get(`${baseUrl}/Users?filterByFormula=${uidSearchFormula}&api_key=${apiKey}`); //SEARCH AIRTABLE FOR USER'S FIREBASE ID
         
-        // const emailSearchFormula = `{Email}="${lowercaseEmail}"`;
-        // const emailSearchResponse = await axios.get(`${baseUrl}/Users?filterByFormula=${emailSearchFormula}&api_key=${apiKey}`);    //SEARCH AIRTABLE FOR USER'S EMAIL
-        
         if (!_.isEmpty(uidSearchResponse.data.records)) {                                //IF USER FOUND, GATHER PROFILE INFO FOR STORE
             const userRecord = uidSearchResponse.data.records[0];
             const interest1 = userRecord.fields['#1 Interest'] ? userRecord.fields['#1 Interest'][0] : undefined;
@@ -80,7 +77,7 @@ export const startSetUser = ({uid, email}) => {
             }
             dispatch(setUser(user));
             return user;
-        } else {                //IF EMAIL NOT FOUND, CREATE RECORD
+        } else {                //IF USER NOT FOUND, CREATE RECORD
             console.log('User not found');
             const postResponse = await axios.post(`${baseUrl}/Users?api_key=${apiKey}`, {"fields": {"Email": email, "Firebase ID": uid}});
             const user = {
@@ -114,13 +111,14 @@ export const startUpdateUser = (user, placeDetails) => {
                 axios.patch(`${baseUrl}/Users/${user.recordId}?api_key=${apiKey}`, {"fields": fields});         //UPDATE AIRTABLE PROFILE FIELDS
                 
                 const userId = user.recordId;
+                const userAvailabilityIds = user.availability;
                 const userInterestIds = user.allInterests;
                 let userAreaId = !!user.area ? user.area.id : '';
                 if (placeDetails) {                                                 //IF PLACEDETAILS PROVIDED...
                     userAreaId = await geolocateUser(userId, placeDetails);             //GEOLOCATE AND ASSIGN AREA
                 } 
                 
-                user.groups = await updateUsersGroups(userId, userInterestIds, userAreaId);    
+                user.groups = await updateUsersGroups(userId, userInterestIds, userAreaId, userAvailabilityIds);    
                 dispatch(startGetEvents(user.groups, user.availability));         //UPDATE USER'S EVENTS IN STORE
             } else {
                 axios.post(`${baseUrl}/Users?api_key=${apiKey}`, {"fields": {"Email": user.email, "Firebase ID": user.firebaseId, ...fields}});

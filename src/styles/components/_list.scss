@@ -61,7 +61,7 @@
         width: auto;
         flex-wrap: wrap;
         > * {
-                padding-right: $m-size;
+            padding-right: $m-size;
         }
     }
 }
@@ -82,6 +82,7 @@
 .list-item__right {
     display: flex;
     align-items: center;
+    padding-left: $xs-size;
     > * {
         padding-left: $xs-size;
     }

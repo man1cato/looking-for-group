@@ -21,7 +21,7 @@ export const GroupPage = (props) => (
                 </div>
             </div>
             <div className="list-body">
-                <EventList interest={props.group.interest} area={props.group.area} />
+                <EventList interest={props.group.interest} area={props.group.area} groupAvailabilities={props.group.availabilities}/>
             </div>
         </div>
     </div>
