@@ -1,6 +1,7 @@
 import React from 'react';
 import GroupList from './GroupList';
-
+import {Link} from 'react-router-dom';
+import Footer from '../components/Footer';
 
 const DashboardPage = () => (
     <div>
@@ -11,6 +12,7 @@ const DashboardPage = () => (
             </div>
         </div>
         <GroupList />
+        <Footer />
     </div>
 );
 

@@ -1,0 +1,16 @@
+.footer {
+    margin-top: $m-size;
+}
+
+.footer__content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: $s-size 0;
+    height: 100%;
+    a {
+        text-decoration: none;
+        color: $dark-grey;
+        font-size: $font-size-small;
+    }
+}
