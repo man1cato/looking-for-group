@@ -13,7 +13,7 @@ export const EventList = (props) => (
                         }
                     })
                 ) : (
-                    <div className="list-item list-item--message">This may take some time to load. If it has been more than a minute, then there are no available event times for this group. </div>
+                    <div className="list-item list-item--message">There are currently no available event times for this group. As more people join, this page will populate.</div>
                 )
             }
     </div>

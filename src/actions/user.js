@@ -1,7 +1,7 @@
 import axios from 'axios';
 import _ from 'lodash';
 import createGroupObject from '../utils/createGroupObject';
-import geolocateUser from '../utils/geolocateUser';
+import newGeolocateUser from '../utils/newGeolocateUser';
 import updateUsersGroups from '../utils/updateUsersGroups';
 import {startGetEvents} from './events';
 
@@ -34,10 +34,10 @@ export const startSetUser = ({uid, email}) => {
             let sortedGroups = [];
             
             if (userRecord.fields.Area) {                         //RETRIEVE AREA DATA
-                const areaRecordId = userRecord.fields.Area[0];
-                const areaResponse = await axios.get(`https://api.airtable.com/v0/appOY7Pr6zpzhQs6l/Areas/${areaRecordId}?api_key=${apiKey}`);
+                const areaId = userRecord.fields.Area[0];
+                const areaResponse = await axios.get(`https://api.airtable.com/v0/appOY7Pr6zpzhQs6l/Areas/${areaId}?api_key=${apiKey}`);
                 area = {
-                    id: areaResponse.data.id, 
+                    id: areaId, 
                     name: areaResponse.data.fields.Name,
                     timezoneId: areaResponse.data.fields["Timezone ID"]
                 };  
@@ -114,8 +114,18 @@ export const startUpdateUser = (user, placeDetails) => {
                 const userAvailabilityIds = user.availability;
                 const userInterestIds = user.allInterests;
                 let userAreaId = !!user.area ? user.area.id : '';
+                console.log('userAreaId:',userAreaId);
                 if (placeDetails) {                                                 //IF PLACEDETAILS PROVIDED...
-                    userAreaId = await geolocateUser(userId, placeDetails);             //GEOLOCATE AND ASSIGN AREA
+                    const userLat = placeDetails.geometry.location.lat;
+                    const userLng = placeDetails.geometry.location.lng;
+                    userAreaId = await newGeolocateUser(userId, userLat, userLng);             //GEOLOCATE AND ASSIGN AREA
+                    const areaResponse = await axios.get(`https://api.airtable.com/v0/appOY7Pr6zpzhQs6l/Areas/${userAreaId}?api_key=${apiKey}`);
+                    user.area = {
+                        id: userAreaId, 
+                        name: areaResponse.data.fields.Name,
+                        timezoneId: areaResponse.data.fields["Timezone ID"]
+                    };
+                    console.log('From startUpdateUser:',userLat,userLng, userAreaId);
                 } 
                 
                 user.groups = await updateUsersGroups(userId, userInterestIds, userAreaId, userAvailabilityIds);    

@@ -6,28 +6,28 @@ const baseUrl = 'https://api.airtable.com/v0/appOY7Pr6zpzhQs6l';
 export default (groupData) => {
     const groupUserIds = groupData.fields.Users;
     let groupAvailabilities = [];                                                                       //CREATE NEW GROUP AVAILABILITY OBJECT
-    for (let userId of groupUserIds) {                                                                  //FOR EACH USER IN GROUP...
-        axios.get(`${baseUrl}/Users/${userId}?api_key=${apiKey}`).then((res) => {
-            const userAvailabilityIds = res.data.fields.Availability;                              //GET THEIR AVAILABILITIES...
-        
-            for (let userAvailabilityId of userAvailabilityIds) {                                           //FOR EACH AVAILABILITY...
-                const availability = groupAvailabilities.find((item) => item.id === userAvailabilityId);    //FIND MATCHING AVAILABILITY...
-                
-                if (availability) {                                                                         //IF AVAILABILITY FOUND...
-                    const index = groupAvailabilities.map((item) => item.id).indexOf(availability.id);
-                    groupAvailabilities[index].userCount += 1;                                              //INCREASE COUNT BY ONE
-                } else {                                                                                    //ELSE, ADD IT AND SET COUNT TO 1
-                    groupAvailabilities.push({
-                        id: userAvailabilityId,
-                        userCount: 1
-                    });
+    if (groupUserIds) {
+        for (let userId of groupUserIds) {                                                                  //FOR EACH USER IN GROUP...
+            axios.get(`${baseUrl}/Users/${userId}?api_key=${apiKey}`).then((res) => {
+                const userAvailabilityIds = res.data.fields.Availability;                               //GET THEIR AVAILABILITIES...
+                for (let userAvailabilityId of userAvailabilityIds) {                                           //FOR EACH AVAILABILITY...
+                    const availability = groupAvailabilities.find((item) => item.id === userAvailabilityId);    //FIND MATCHING AVAILABILITY...
+                    
+                    if (availability) {                                                                         //IF AVAILABILITY FOUND...
+                        const index = groupAvailabilities.map((item) => item.id).indexOf(availability.id);
+                        groupAvailabilities[index].userCount += 1;                                              //INCREASE COUNT BY ONE
+                    } else {                                                                                    //ELSE, ADD IT AND SET COUNT TO 1
+                        groupAvailabilities.push({
+                            id: userAvailabilityId,
+                            userCount: 1
+                        });
+                    }
                 }
-            }
-        }).catch((e) => {
-            console.log('Error at createGroupObject:', e);
-        });
-    }
-
+            }).catch((e) => {
+                console.log('Error at createGroupObject:', e);
+            });
+        }
+    } 
     return {
         id: groupData.id, 
         area: groupData.fields["Area Text"],

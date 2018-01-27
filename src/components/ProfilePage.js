@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import moment from 'moment';
 import _ from 'lodash';
 import {startUpdateUser} from '../actions/user';
+
 // import loader from '!!file-loader!../../public/images/loader.gif';
 
 const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -30,39 +31,57 @@ export class ProfilePage extends React.Component {
         };
     }
     // componentDidMount() {
-    //     try {
-    //         navigator.geolocation.getCurrentPosition((position) => {
-    //             console.log("User's position:", position);
-    //             const latlng = position.coords.latitude + ',' + position.coords.longitude;
-    //             const geocoder = new google.maps.Geocoder;
-    //             geocoder.geocode({'location': latlng}, (results, status) => {
-    //               if (status === 'OK') {
-    //                 if (results[0]) {
-    //                     console.log('Reverse geocoding results:', results[0]); 
-    //                 } else {
-    //                   console.log('No results found');
-    //                 }
-    //               } else {
-    //                 console.log('Geocoder failed due to: ' + status);
-    //               }
+    //     if (this.state.area === undefined) {
+    //         try {
+    //             navigator.geolocation.getCurrentPosition((position) => {
+    //                 console.log("User's position:", position);
+    //                 const lat = position.coords.latitude;
+    //                 const lng = position.coords.longitude;
+    //                 const areaId = newGeolocateUser(this.state.recordId,lat,lng);
+    //                 this.setState(() => ({ 
+    //                     area: {id: areaId, ...this.state.area}, 
+    //                     lat,
+    //                     lng
+    //                 }));
     //             });
-    //         });
-    //     } catch (e) {
-    //         switch(e.code) {
-    //             case e.PERMISSION_DENIED:
-    //                 console.log("User denied the request for Geolocation.");
-    //                 break;
-    //             case e.POSITION_UNAVAILABLE:
-    //                 console.log("Location information is unavailable.");
-    //                 break;
-    //             case e.TIMEOUT:
-    //                 console.log("The request to get user location timed out.");
-    //                 break;
-    //             case e.UNKNOWN_ERROR:
-    //                 console.log("An unknown error occurred.");
-    //                 break;
+                
+    //             const scriptBlock = document.createElement('div');                  //CREATE <DIV> TO HOLD TEMPORARY DATA
+    //             scriptBlock.id = 'scriptBlock';
+    //             document.body.appendChild(scriptBlock);
+            
+    //             const scriptNode = document.createElement('script');
+    //             scriptNode.innerHTML = `reverseGeocode(${this.state.lat},${this.state.lng})`;  //MAKE CALL TO GOOGLE GEOCODER THEN CREATE <DIV> WITH RESPONSE INSIDE
+    //             document.getElementById('scriptBlock').appendChild(scriptNode);
+                
+    //             setTimeout(async () => {
+    //                 console.log('geocoder textContent from ProfilePage:',document.getElementById('placeDetails').textContent);
+    //                 const placeDetails = await JSON.parse(document.getElementById('placeDetails').textContent);
+    //                 // console.log('placeDetails:',placeDetails);
+    //                 await this.props.startUpdateUser(this.state, placeDetails);                                 //UPDATE USER'S PROFILE
+    //                 document.body.removeChild(scriptBlock);                         //DELETE <DIV> BLOCK TO CLEAR DATA
+    //                 this.props.history.push('/');
+    //             }, 2500);
+                
+    //         } catch (e) {
+    //             switch(e.code) {
+    //                 case e.PERMISSION_DENIED:
+    //                     console.log("User denied the request for Geolocation.");
+    //                     alert("Location is needed to match users. Please make sure to provide your postal code.");
+    //                     break;
+    //                 case e.POSITION_UNAVAILABLE:
+    //                     console.log("Location information is unavailable.");
+    //                     alert("Could not retrieve location information. Please make sure to provide your postal code to be matched with others.");
+    //                     break;
+    //                 case e.TIMEOUT:
+    //                     console.log("The request to get user location timed out.");
+    //                     break;
+    //                 case e.UNKNOWN_ERROR:
+    //                     console.log("An unknown error occurred.");
+    //                     break;
+    //             }
     //         }
     //     }
+        
     // }
     filterInterests = (interests, filteringInterests) => {        //array of objects, array
         const filterArray = filteringInterests.map((interestId) => _.find(interests, ['id', interestId]) );
@@ -111,7 +130,6 @@ export class ProfilePage extends React.Component {
         e.preventDefault();
         this.setState(() => ({ buttonDisabled: true }));
         document.getElementById('profile-button').className = "button button--disabled button--profile";
-        // document.getElementById('profile-button').disabled = true;              //DISABLE SUBMIT BUTTON
         document.getElementById("snackbar").className = "snackbar animated-show";    // TRIGGER SNACKBAR ANIMATION
         
         if (this.state.postalCode !== this.props.user.postalCode) {             //IF POSTAL CODE WAS UPDATED...
@@ -125,7 +143,7 @@ export class ProfilePage extends React.Component {
             document.getElementById('scriptBlock').appendChild(scriptNode);
             
             setTimeout(async () => {
-                console.log('textContent from ProfilePage:',document.getElementById('placeDetails').textContent);
+                console.log('placeDetails textContent from ProfilePage:',document.getElementById('placeDetails').textContent);
                 const placeDetails = await JSON.parse(document.getElementById('placeDetails').textContent);
                 // console.log('placeDetails:',placeDetails);
                 await this.props.startUpdateUser(this.state, placeDetails);                                 //UPDATE USER'S PROFILE

@@ -29,8 +29,8 @@ export const GroupPage = (props) => (
 
 
 const mapStateToProps = (state, props) => ({
-    group: state.user.groups.find((group) => group.id === props.match.params.id),     //RETURNS GROUP OBJECT WHERE ID MATCHES URL ID PARAM
-    events: state.events.filter((event) => event.groupId === props.match.params.id) //RETURNS ARRAY OF EVENT OBJECTS WHERE GROUPID MATCHES URL ID PARAM
+    group: state.user.groups.find((group) => group.id === props.match.params.id),       //RETURNS GROUP OBJECT WHERE ID MATCHES URL ID PARAM
+    events: state.events.filter((event) => event.groupId === props.match.params.id)     //RETURNS ARRAY OF EVENT OBJECTS WHERE GROUPID MATCHES URL ID PARAM
 });
 
 export default connect(mapStateToProps)(GroupPage);

@@ -10,8 +10,8 @@ export const GroupList = (props) => (
         <div className="content-container">
             <div className="list-body">
                 {
-                    !_.isEmpty(props.groups) && !_.isEmpty(props.events) && (
-                        props.groups.map((group) => group.eventCount > 0 && <GroupListItem key={group.id} {...group} /> )
+                    !_.isEmpty(props.groups) && (
+                        props.groups.map((group) => <GroupListItem key={group.id} {...group} /> )
                     ) || !_.isEmpty(props.groups) && _.isEmpty(props.events) && (
                         <div className="list-item list-item--message">
                             <div>It seems that your interest groups are still growing their populations. As an early tester, this is expected. Please check back soon to see which interests groups become available as other users join!</div>
@@ -35,3 +35,20 @@ const mapStateToProps = (state) => ({
 });
 
 export default connect(mapStateToProps)(GroupList);
+
+
+
+//FILTERED BY NO EVENTS:
+// {
+//                     !_.isEmpty(props.groups) && !_.isEmpty(props.events) && (
+//                         props.groups.map((group) => group.eventCount > 0 && <GroupListItem key={group.id} {...group} /> )
+//                     ) || !_.isEmpty(props.groups) && _.isEmpty(props.events) && (
+//                         <div className="list-item list-item--message">
+//                             <div>It seems that your interest groups are still growing their populations. As an early tester, this is expected. Please check back soon to see which interests groups become available as other users join!</div>
+//                         </div>
+//                     ) || (
+//                         <div className="list-item list-item--message">
+//                             <div>Please update your <span><Link to='/profile'>profile</Link></span> to see available groups in your area. If you've already done so, please give this a moment to load.</div>
+//                         </div>
+//                     )
+//                 }
