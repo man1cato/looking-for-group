@@ -2,6 +2,7 @@ node_modules/
 yarn-error.log
 react-lfg.js
 public/dist/
+.env
 .env.test
 .env.development
 playground.js
