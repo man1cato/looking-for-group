@@ -4,6 +4,7 @@
   "main": "index.js",
   "author": "Andres Rodriguez",
   "license": "MIT",
+  "stack": "heroku-22",
   "scripts": {
     "build:dev": "webpack",
     "build:prod": "webpack -p --env production",
